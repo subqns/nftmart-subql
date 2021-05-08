@@ -1,5 +1,4 @@
-version: '3'
-
+version: "3"
 services:
   postgres:
     image: postgres:12-alpine
@@ -9,13 +8,12 @@ services:
       - ./data/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
-
   subql-query:
     image: onfinality/subql-query:latest
     ports:
       - 3000:3000
     depends_on:
-      - "postgres"
+      - postgres
     restart: always
     environment:
       DB_USER: postgres
@@ -24,13 +22,12 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     command:
-      - '--name=acala'
-      - '--playground'
-
+      - --name=acala
+      - --playground
   subql-node:
     image: onfinality/subql-node:latest
     depends_on:
-      - "postgres"
+      - postgres
     restart: always
     environment:
       DB_USER: postgres
@@ -41,22 +38,20 @@ services:
     volumes:
       - ./:/app
     command:
-      - '-f=/app'
-      - '--subquery-name=acala'
-      - '--migrate'
-
+      - -f=/app
+      - --subquery-name=acala
+      - --migrate
   pgadmin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-       - ./data/pgadmin:/root/.pgadmin
+      - ./data/pgadmin:/root/.pgadmin
     ports:
-      - "9080:80"
+      - 9080:80
     restart: always
-
   adminer:
     image: adminer
     environment:
@@ -64,35 +59,44 @@ services:
       ADMINER_DEFAULT_DB_HOST: postgres
       ADMINER_DEFAULT_DB_NAME: postgres
     ports:
-    - 8090:8080
-
+      - 8090:8080
   phppgadmin:
     restart: always
     image: dockage/phppgadmin:latest
     ports:
-    - "8080:80"
+      - 8080:80
     environment:
-    - PHP_PG_ADMIN_SERVER_DESC=PostgreSQL
-    - PHP_PG_ADMIN_SERVER_HOST=postgres
-    - PHP_PG_ADMIN_SERVER_PORT=5432
-    - PHP_PG_ADMIN_SERVER_SSL_MODE=allow
-    - PHP_PG_ADMIN_SERVER_DEFAULT_DB=postgres
-    - PHP_PG_ADMIN_SERVER_PG_DUMP_PATH=/usr/bin/pg_dump
-    - PHP_PG_ADMIN_SERVER_PG_DUMPALL_PATH=/usr/bin/pg_dumpall
-
-    - PHP_PG_ADMIN_DEFAULT_LANG=auto
-    - PHP_PG_ADMIN_AUTO_COMPLETE=default on
-    - PHP_PG_ADMIN_EXTRA_LOGIN_SECURITY=false
-    - PHP_PG_ADMIN_OWNED_ONLY=false
-    - PHP_PG_ADMIN_SHOW_COMMENTS=true
-    - PHP_PG_ADMIN_SHOW_ADVANCED=false
-    - PHP_PG_ADMIN_SHOW_SYSTEM=false
-    - PHP_PG_ADMIN_MIN_PASSWORD_LENGTH=1
-    - PHP_PG_ADMIN_LEFT_WIDTH=200
-    - PHP_PG_ADMIN_THEME=default
-    - PHP_PG_ADMIN_SHOW_OIDS=false
-    - PHP_PG_ADMIN_MAX_ROWS=30
-    - PHP_PG_ADMIN_MAX_CHARS=50
-    - PHP_PG_ADMIN_USE_XHTML_STRICT=false
-    - PHP_PG_ADMIN_HELP_BASE=http://www.postgresql.org/docs/%s/interactive/
-    - PHP_PG_ADMIN_AJAX_REFRESH=3
+      - PHP_PG_ADMIN_SERVER_DESC=PostgreSQL
+      - PHP_PG_ADMIN_SERVER_HOST=postgres
+      - PHP_PG_ADMIN_SERVER_PORT=5432
+      - PHP_PG_ADMIN_SERVER_SSL_MODE=allow
+      - PHP_PG_ADMIN_SERVER_DEFAULT_DB=postgres
+      - PHP_PG_ADMIN_SERVER_PG_DUMP_PATH=/usr/bin/pg_dump
+      - PHP_PG_ADMIN_SERVER_PG_DUMPALL_PATH=/usr/bin/pg_dumpall
+      - PHP_PG_ADMIN_DEFAULT_LANG=auto
+      - PHP_PG_ADMIN_AUTO_COMPLETE=default on
+      - PHP_PG_ADMIN_EXTRA_LOGIN_SECURITY=false
+      - PHP_PG_ADMIN_OWNED_ONLY=false
+      - PHP_PG_ADMIN_SHOW_COMMENTS=true
+      - PHP_PG_ADMIN_SHOW_ADVANCED=false
+      - PHP_PG_ADMIN_SHOW_SYSTEM=false
+      - PHP_PG_ADMIN_MIN_PASSWORD_LENGTH=1
+      - PHP_PG_ADMIN_LEFT_WIDTH=200
+      - PHP_PG_ADMIN_THEME=default
+      - PHP_PG_ADMIN_SHOW_OIDS=false
+      - PHP_PG_ADMIN_MAX_ROWS=30
+      - PHP_PG_ADMIN_MAX_CHARS=50
+      - PHP_PG_ADMIN_USE_XHTML_STRICT=false
+      - PHP_PG_ADMIN_HELP_BASE=http://www.postgresql.org/docs/%s/interactive/
+      - PHP_PG_ADMIN_AJAX_REFRESH=3
+  mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_mysql.sql:ro
+      - ./data/mysql:/var/lib/mysql:rw
+    environment:
+      MYSQL_ROOT_PASSWORD: nftmart
+      MYSQL_DATABASE: nftmart
