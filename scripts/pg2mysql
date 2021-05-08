@@ -18,6 +18,12 @@ pg(){
   docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@localhost/postgres -c "$@"
 }
 
+hack(){
+  docker-compose exec -T -u mysql -e MYSQL_PWD=nftmart -- mysql mysql -h127.0.0.1 --port=3306 -uroot nftmart <<EOF
+SET SESSION SQL_MODE='ALLOW_INVALID_DATES'
+EOF
+}
+
 mq(){
 # docker run -e MYSQL_PWD=nftmart -i --rm --net host mysql:5.7 mysql -h127.0.0.1 --port=3306 -uroot nftmart <<< "$@"
 # docker exec -i acala-subql_mysql_1 env MYSQL_PWD=nftmart mysql -h127.0.0.1 --port=3306 -uroot nftmart <<< "$@"
@@ -41,11 +47,11 @@ sql2csv(){
   docker run -i --net=host btwiuse/csvkit sql2csv "$@"
 }
 
-#csvsql(){
-#  docker run -i --net=host btwiuse/csvkit csvsql "$@"
-#}
+csvsql(){
+  docker run -i --net=host btwiuse/csvkit csvsql "$@"
+}
 
-pq2mq(){
+sync_once(){
   echo -e "MQ_ROWS\tPQ_ROWS\tDIFF\tBATCH\t%\tTABLE"
   for table in accounts blocks calls events extrinsics; do
     MR="$(mq_rows $table)"
@@ -68,8 +74,11 @@ pq2mq(){
 }
 
 main(){
+# hack
   while :; do
-    pa2mq
+    sync_once
     echo
   done
 }
+
+main "$@"
