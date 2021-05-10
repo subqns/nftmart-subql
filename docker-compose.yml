@@ -116,3 +116,13 @@ services:
     working_dir: $PWD
     tty: true
     stdin_open: true
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql:db
+    ports:
+      - 33060:80
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: nftmart
+      MYSQL_ROOT_PASSWORD: nftmart
