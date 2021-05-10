@@ -4,9 +4,12 @@
 # - csvkit
 # - jq
 
+POSTGRES=postgres
+MYSQL=mysql
+
 pgtables(){
 # docker exec -u postgres -i acala-subql_postgres_1 env PGOPTIONS=--search_path=subquery_1 psql postgresql://postgres:postgres@localhost/postgres -c "\dt" --csv | csvjson | jq -r .[].Name
-  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@localhost/postgres -c "\dt" --csv | csvjson | jq -r .[].Name
+  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@$POSTGRES/postgres -c "\dt" --csv | csvjson | jq -r .[].Name
 }
 
 mqtables(){
@@ -15,7 +18,7 @@ mqtables(){
 
 pg(){
 # docker exec -u postgres -i acala-subql_postgres_1 env PGOPTIONS=--search_path=subquery_1 psql postgresql://postgres:postgres@localhost/postgres -c "$@"
-  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@localhost/postgres -c "$@"
+  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@$POSTGRES/postgres -c "$@"
 }
 
 hack(){
@@ -32,7 +35,7 @@ mq(){
 
 pq(){
 # docker exec -u postgres -i acala-subql_postgres_1 env PGOPTIONS=--search_path=subquery_1 psql postgresql://postgres:postgres@localhost/postgres -A <<< "$@"
-  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@localhost/postgres -c "$@"
+  docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@$POSTGRES/postgres -c "$@"
 }
 
 mq_rows(){
@@ -44,11 +47,13 @@ pq_rows(){
 }
 
 sql2csv(){
-  docker run -i --net=host btwiuse/csvkit sql2csv "$@"
+# docker run -i --net=host btwiuse/csvkit sql2csv "$@"
+  docker-compose exec -T -- csvkit sql2csv "$@"
 }
 
 csvsql(){
-  docker run -i --net=host btwiuse/csvkit csvsql "$@"
+  # docker run -i --net=host btwiuse/csvkit csvsql "$@"
+  docker-compose exec -T -- csvkit csvsql "$@"
 }
 
 sync_once(){
@@ -57,7 +62,7 @@ sync_once(){
     MR="$(mq_rows $table)"
     PR="$(pq_rows $table)"
     DIFF="$((PR-MR))"
-    BATCH_LIMIT=1024
+    BATCH_LIMIT=4096
     BATCH=$((DIFF>BATCH_LIMIT ? BATCH_LIMIT : DIFF))
     PROGRESS="$(bc <<< "scale=2; $MR / $PR * 100")"
 
@@ -67,14 +72,26 @@ sync_once(){
 
     # pg "select * from $table limit $BATCH offset $MR;" -A -F $'\t' -P "footer=off" | sed 1d | wc -l
     # pq "SELECT * FROM $table ORDER BY created_at ASC LIMIT $BATCH OFFSET $MR;" -A -F $'\t' -P "footer=off" |\
-    sql2csv --db postgresql://postgres:postgres@localhost:5432/postgres --query "SELECT * FROM subquery_1.$table ORDER BY created_at ASC LIMIT $BATCH OFFSET $MR;" |\
-    csvsql -t --db mysql+mysqlconnector://root:nftmart@localhost:3306/nftmart --insert --tables $table --no-create -
+    sql2csv --db postgresql://postgres:postgres@$POSTGRES:5432/postgres --query "SELECT * FROM subquery_1.$table ORDER BY created_at ASC LIMIT $BATCH OFFSET $MR;" |\
+    csvsql -t --db mysql+mysqlconnector://root:nftmart@$MYSQL:3306/nftmart --insert --tables $table --no-create -
 
+  done
+}
+
+ensure_db(){
+  until docker-compose exec -T -u postgres -e PGOPTIONS=--search_path=subquery_1 -- postgres psql postgresql://postgres:postgres@$POSTGRES/postgres -c "\dt" --csv | csvjson | jq -r .[].Name >/dev/null; do
+    echo "waiting for postgres to be ready"
+    sleep 1
+  done
+  until docker-compose exec -T -u mysql -e MYSQL_PWD=nftmart -- mysql mysql -h127.0.0.1 --port=3306 -uroot nftmart -e 'show databases;' > /dev/null; do
+    echo "waiting for mysql to be ready"
+    sleep 1
   done
 }
 
 main(){
 # hack
+  ensure_db
   while :; do
     sync_once
     echo
