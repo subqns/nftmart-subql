@@ -102,10 +102,10 @@ services:
       MYSQL_ROOT_PASSWORD: nftmart
       MYSQL_DATABASE: nftmart
   csvkit:
-    build:
-      context: ./
-      dockerfile: ./Dockerfile.csvkit
-  # image: btwiuse/csvkit
+  # build:
+  #   context: ./
+  #   dockerfile: ./Dockerfile.csvkit
+    image: btwiuse/csvkit
     restart: always
     command:
     # - cat
