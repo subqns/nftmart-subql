@@ -4,6 +4,7 @@ import { BlockHandler } from './block'
 import { ExtrinsicHandler } from './extrinsic'
 import { Dispatcher } from '../helpers/dispatcher'
 import { AccountHandler } from './sub-handlers/account'
+import { AddressHandler } from './sub-handlers/address'
 import { TransferHandler } from './sub-handlers/transfer'
 
 type EventDispatch = Dispatcher<SubstrateEvent>
@@ -20,7 +21,12 @@ export class EventHandler {
   }
 
   private registerDispatcherHandler () {
-    this.dispatcher.batchRegist([ ])
+    this.dispatcher.batchRegist([
+      {
+        key: 'system-NewAccount',
+        handler: AddressHandler.handleEventSystemNewAccount
+      }
+    ])
   }
 
   get index () {
