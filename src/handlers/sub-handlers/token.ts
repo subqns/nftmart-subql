@@ -6,7 +6,7 @@ import { AnyCall } from '../types'
 import { AccountHandler } from './account'
 
 export class TokenHandler {
-  static async ensureToken (id: string, decimal?: number) {
+  static async ensureToken (id: string, decimal?: bigint) {
     const token = await Token.get(id)
 
     if (!token) {

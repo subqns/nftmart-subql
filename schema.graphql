@@ -77,13 +77,12 @@ type Account @entity {
 
   transferIn: [Transfer] @derivedFrom(field: "to")
   transferOut: [Transfer] @derivedFrom(field: "from")
-  position: [LoanPosition] @derivedFrom(field: "account")
 }
 
 type Token @entity {
   id: ID!
 
-  decimal: Int
+  decimal: BigInt
   name: String
 }
 
@@ -100,120 +99,3 @@ type Transfer @entity {
   timestamp: Date
   isSuccess: Boolean
 }
-
-#
-#type LoanDayData @entity {
-#  id: ID!
-#
-#  token: String!
-#  timestamp: Date!
-#
-#  collateral: BigInt!
-#  debit: BigInt!
-#}
-#
-
-type LoanPosition @entity {
-  id: ID!
-
-  account: Account
-  token: Token
-
-  debit: BigInt
-  collateral: BigInt
-}
-
-type LoanAction @entity {
-  id: ID!
-
-  account: Account
-  token: Token
-  collateral: BigInt
-  debit: BigInt
-  exchangeRate: BigInt
-
-  extrinsic: Extrinsic #create relation to extrinsic
-  call: Call #create relation to call
-  timestamp: Date
-  isSuccess: Boolean
-}
-
-#type Pair @entity {
-#  id: ID!
-#
-#  token0: String!
-#  token1: String!
-#  totalSupply: BigInt!
-#
-#  token0Volume: BigInt!
-#  token1Volume: BigInt!
-#
-#  token0USD: BigInt!
-#  token1USD: BigInt!
-#
-#  token0Price: BigInt!
-#  token1Price: BigInt!
-#
-#  txCount: BigInt!
-#}
-#
-#type SwapAction @entity {
-#  id: ID!
-#  isBatch: Int!
-#  isSudo: Int!
-#  isSuccess: Int!
-#
-#  block: String!
-#  extrinsicHash: String!
-#  timestamp: Date!
-#
-#  account: String!
-#  type: String!
-#  path: String!
-#  token0: String!
-#  token1: String!
-#  token0Input: String!
-#  token1Input: String!
-#  result: String!
-#}
-#
-#type AddLiquidityHistory @entity {
-#  id: ID!
-#  isBatch: Int!
-#  isSudo: Int!
-#  isSuccess: Int!
-#
-#  block: String!
-#  extrinsicHash: String!
-#  timestamp: Date!
-#
-#  account: String!
-#  token0: String!
-#  token1: String!
-#
-#  token0Input: BigInt!
-#  token1Input: BigInt!
-#
-#  token0Amount: BigInt!
-#  token1Amount: BigInt!
-#  receivedShare: BigInt!
-#}
-#
-#type RemoveLiquidityHistoryEntity @entity {
-#  id: ID!
-#  isBatch: Int!
-#  isSudo: Int!
-#  isSuccess: Int!
-#
-#  block: String!
-#  timestamp: Date!
-#
-#  account: String!
-#  token0: String!
-#  token1: String!
-#  removedShare: BigInt!
-#
-#  token0Amount: BigInt!
-#  token1Amount: BigInt!
-#}
-#

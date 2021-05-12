@@ -5,7 +5,6 @@ import { ExtrinsicHandler } from './extrinsic'
 import { AccountHandler } from './sub-handlers/account'
 import { Dispatcher } from '../helpers/dispatcher'
 import { TransferHandler } from './sub-handlers/transfer'
-import { LoanHandler } from './sub-handlers/loan'
 import { AnyCall, CallDispatcher, DispatchedCallData } from './types'
 
 
@@ -31,13 +30,9 @@ export class CallHandler {
   private registerSubHandler () {
     this.dispatcher.batchRegist([
       {
-        key: 'currencies-transfer',
-        handler: TransferHandler.createFromCurrenciesModule
+        key: 'balances-transfer',
+        handler: TransferHandler.handleCallBalancesTransfer
       },
-      {
-        key: 'honzon-adjustLoan',
-        handler: LoanHandler.createLoanAction
-      }
     ])
   }
 

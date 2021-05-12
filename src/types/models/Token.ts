@@ -14,7 +14,7 @@ export class Token implements Entity {
 
     public id: string;
 
-    public decimal?: number;
+    public decimal?: bigint;
 
     public name?: string;
 
