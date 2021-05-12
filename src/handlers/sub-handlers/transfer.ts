@@ -20,7 +20,7 @@ export class TransferHandler {
     await AccountHandler.ensureAccount(to)
     await AccountHandler.ensureAccount(from)
     await CallHandler.ensureCall(id)
-    await TokenHandler.ensureToken("NMT", BigInt(1000000000000))
+    await TokenHandler.ensureToken("NMT", 12)
 
     const transfer = new Transfer(id)
 
@@ -32,6 +32,7 @@ export class TransferHandler {
     transfer.callId = id
     transfer.timestamp = extrinsicHandler.timestamp
     transfer.isSuccess = isSuccess
+    transfer.blockId = extrinsic.block.block.hash.toString()
 
     await transfer.save()
   }

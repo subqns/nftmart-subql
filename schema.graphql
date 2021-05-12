@@ -82,7 +82,7 @@ type Account @entity {
 type Token @entity {
   id: ID!
 
-  decimal: BigInt
+  decimal: Int
   name: String
 }
 
@@ -94,6 +94,7 @@ type Transfer @entity {
   token: Token
   amount: BigInt
 
+  block: Block #create relation to block
   extrinsic: Extrinsic #create relation to extrinsic
   call: Call #create relation to call
   timestamp: Date

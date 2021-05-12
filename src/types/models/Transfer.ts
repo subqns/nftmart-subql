@@ -22,6 +22,8 @@ export class Transfer implements Entity {
 
     public amount?: bigint;
 
+    public blockId?: string;
+
     public extrinsicId?: string;
 
     public callId?: string;
