@@ -40,6 +40,10 @@ export class CallHandler {
     return this.extrinsic.extrinsic.hash.toString()
   }
 
+  get blockHash(): string {
+    return this.extrinsic.block.block.hash.toString()
+  }
+
   get signer(): string {
     return this.extrinsic.extrinsic.signer.toString()
   }
@@ -69,6 +73,7 @@ export class CallHandler {
       call.signerId = this.signer
       call.isSuccess = depth === 0 ? extrinsic.isSuccess : extrinsic.batchInterruptedIndex > idx;
       call.timestamp = extrinsic.timestamp
+      call.blockId = this.blockHash
 
       if (!isRoot) {
         await CallHandler.ensureCall(parentCallId)

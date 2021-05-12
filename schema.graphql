@@ -62,6 +62,7 @@ type Call @entity {
   timestamp: Date
   isSuccess: Boolean
 
+  block: Block #create relation to block
   signer: Account #create ration to account
   extrinsic: Extrinsic #create relation to extrinsic
   parentCall: Call #create relation to call

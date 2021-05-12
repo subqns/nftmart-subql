@@ -24,6 +24,8 @@ export class Call implements Entity {
 
     public isSuccess?: boolean;
 
+    public blockId?: string;
+
     public signerId?: string;
 
     public extrinsicId?: string;
