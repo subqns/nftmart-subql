@@ -33,6 +33,10 @@ export class CallHandler {
         key: 'balances-transfer',
         handler: TransferHandler.handleCallBalancesTransfer
       },
+      {
+        key: 'balances-transferKeepAlive',
+        handler: TransferHandler.handleCallBalancesTransfer
+      }
     ])
   }
 
