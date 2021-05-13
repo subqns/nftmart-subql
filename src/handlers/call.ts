@@ -3,6 +3,8 @@ import { SubstrateExtrinsic } from '@subql/types'
 import { Call } from '../types/models/Call'
 import { ExtrinsicHandler } from './extrinsic'
 import { AccountHandler } from './sub-handlers/account'
+import { CategoryHandler } from './sub-handlers/category'
+import { ClassHandler } from './sub-handlers/class'
 import { Dispatcher } from '../helpers/dispatcher'
 import { TransferHandler } from './sub-handlers/transfer'
 import { AnyCall, CallDispatcher, DispatchedCallData } from './types'
@@ -36,6 +38,14 @@ export class CallHandler {
       {
         key: 'balances-transferKeepAlive',
         handler: TransferHandler.handleCallBalancesTransfer
+      },
+      {
+        key: 'nftmart-createCategory',
+        handler: CategoryHandler.handleCallNftmartCreateCategory
+      },
+      {
+        key: 'nftmart-createClass',
+        handler: ClassHandler.handleCallNftmartCreateClass
       }
     ])
   }

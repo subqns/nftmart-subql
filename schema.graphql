@@ -101,3 +101,20 @@ type Transfer @entity {
   timestamp: Date
   isSuccess: Boolean
 }
+
+type Category @entity {
+  id: ID!
+
+  creator: Account!
+  metadata: String!
+}
+
+type Class @entity {
+  id: ID!
+
+  creator: Account!
+  metadata: String!
+  name: String!
+  description: String!
+  properties: Int!
+}
