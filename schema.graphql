@@ -105,16 +105,18 @@ type Transfer @entity {
 type Category @entity {
   id: ID!
 
-  creator: Account!
-  metadata: String!
+  creator: Account
+  name: String
+  debug: String
 }
 
 type Class @entity {
   id: ID!
 
-  creator: Account!
-  metadata: String!
-  name: String!
-  description: String!
-  properties: Int!
+  creator: Account
+  metadata: String
+  name: String
+  description: String
+  properties: Int
+  debug: String
 }

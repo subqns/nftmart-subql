@@ -14,9 +14,11 @@ export class Category implements Entity {
 
     public id: string;
 
-    public creatorId: string;
+    public creatorId?: string;
 
-    public metadata: string;
+    public name?: string;
+
+    public debug?: string;
 
 
     async save(): Promise<void>{

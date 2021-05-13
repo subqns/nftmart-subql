@@ -14,15 +14,17 @@ export class Class implements Entity {
 
     public id: string;
 
-    public creatorId: string;
+    public creatorId?: string;
 
-    public metadata: string;
+    public metadata?: string;
 
-    public name: string;
+    public name?: string;
 
-    public description: string;
+    public description?: string;
 
-    public properties: number;
+    public properties?: number;
+
+    public debug?: string;
 
 
     async save(): Promise<void>{

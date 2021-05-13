@@ -9,3 +9,7 @@ export function tcWrapper<F extends AnyFunction>(fn: F) {
         }
     }) as F
 }
+
+export function hexToAscii(hex: string) {
+    return Buffer.from(hex.replace("0x",""),"hex").toString("utf8")
+}

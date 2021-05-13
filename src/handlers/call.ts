@@ -38,14 +38,6 @@ export class CallHandler {
       {
         key: 'balances-transferKeepAlive',
         handler: TransferHandler.handleCallBalancesTransfer
-      },
-      {
-        key: 'nftmart-createCategory',
-        handler: CategoryHandler.handleCallNftmartCreateCategory
-      },
-      {
-        key: 'nftmart-createClass',
-        handler: ClassHandler.handleCallNftmartCreateClass
       }
     ])
   }

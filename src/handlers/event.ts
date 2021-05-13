@@ -6,6 +6,8 @@ import { Dispatcher } from '../helpers/dispatcher'
 import { AccountHandler } from './sub-handlers/account'
 import { AddressHandler } from './sub-handlers/address'
 import { TransferHandler } from './sub-handlers/transfer'
+import { CategoryHandler } from './sub-handlers/category'
+import { ClassHandler } from './sub-handlers/class'
 
 type EventDispatch = Dispatcher<SubstrateEvent>
 
@@ -25,6 +27,14 @@ export class EventHandler {
       {
         key: 'system-NewAccount',
         handler: AddressHandler.handleEventSystemNewAccount
+      },
+      {
+        key: "nftmart-CreatedCategory",
+        handler: CategoryHandler.handleEventNftmartCreatedCategory
+      },
+      {
+        key: "nftmart-CreatedClass",
+        handler: ClassHandler.handleEventNftmartCreatedClass
       }
     ])
   }
