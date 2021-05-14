@@ -5,7 +5,7 @@
 import {Entity} from "@subql/types";
 import assert from 'assert';
 
-export class Transfer implements Entity {
+export class NftTransfer implements Entity {
 
     constructor(id: string) {
         this.id = id;
@@ -18,9 +18,7 @@ export class Transfer implements Entity {
 
     public toId?: string;
 
-    public tokenId?: string;
-
-    public amount?: bigint;
+    public nftId?: string;
 
     public blockId?: string;
 
@@ -37,26 +35,26 @@ export class Transfer implements Entity {
 
     async save(): Promise<void>{
         let id = this.id;
-        assert(id !== null, "Cannot save Transfer entity without an ID");
-        await store.set('Transfer', id.toString(), this);
+        assert(id !== null, "Cannot save NftTransfer entity without an ID");
+        await store.set('NftTransfer', id.toString(), this);
     }
     static async remove(id:string): Promise<void>{
-        assert(id !== null, "Cannot remove Transfer entity without an ID");
-        await store.remove('Transfer', id.toString());
+        assert(id !== null, "Cannot remove NftTransfer entity without an ID");
+        await store.remove('NftTransfer', id.toString());
     }
 
-    static async get(id:string): Promise<Transfer>{
-        assert(id !== null, "Cannot get Transfer entity without an ID");
-        const record = await store.get('Transfer', id.toString());
+    static async get(id:string): Promise<NftTransfer>{
+        assert(id !== null, "Cannot get NftTransfer entity without an ID");
+        const record = await store.get('NftTransfer', id.toString());
         if (record){
-            return Transfer.create(record);
+            return NftTransfer.create(record);
         }else{
             return;
         }
     }
 
     static create(record){
-        let entity = new Transfer(record.id);
+        let entity = new NftTransfer(record.id);
         Object.assign(entity,record);
         return entity;
     }

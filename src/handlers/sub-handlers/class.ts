@@ -9,6 +9,17 @@ import { hexToAscii } from '../../helpers/common'
 
 export class ClassHandler {
 
+  static async ensureClass (id: string): Promise<void> {
+
+    let clas = await Class.get(id)
+
+    if (!clas) {
+      clas = new Class(id)
+      await clas.save()
+    }
+
+  }
+
   static async handleEventNftmartCreatedClass (event : SubstrateEvent){
 
     const {event: { data: [owner, class_id] }} = event;
@@ -22,6 +33,8 @@ export class ClassHandler {
     const name = hexToAscii(args[1].toString())
     const description = hexToAscii(args[2].toString())
     const properties = Number(args[3].toString())
+    const transferable = properties | 0b00000001
+    const burnable = (properties | 0b00000010) >> 1
 
     const id = class_id.toString()
 
@@ -31,7 +44,8 @@ export class ClassHandler {
     clas.metadata = metadata
     clas.name = name
     clas.description = description
-    clas.properties = properties
+    clas.transferable = !!transferable
+    clas.burnable = !!burnable
 
     clas.debug = args.toString()
 
@@ -47,6 +61,8 @@ export class ClassHandler {
     const name = args[2].toString()
     const description = args[3].toString()
     const properties = Number(args[4].toString())
+    const transferable = properties | 0b00000001
+    const burnable = (properties | 0b00000010) >> 1
 
     await AccountHandler.ensureAccount(origin)
     await CallHandler.ensureCall(id)
@@ -57,7 +73,8 @@ export class ClassHandler {
     clas.metadata = data
     clas.name = name
     clas.description = description
-    clas.properties = properties
+    clas.transferable = !!transferable
+    clas.burnable = !!burnable
 
     await clas.save()
   }

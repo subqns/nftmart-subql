@@ -22,7 +22,9 @@ export class Class implements Entity {
 
     public description?: string;
 
-    public properties?: number;
+    public transferable?: boolean;
+
+    public burnable?: boolean;
 
     public debug?: string;
 

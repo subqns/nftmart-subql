@@ -8,6 +8,15 @@ import { AccountHandler } from './account'
 import { hexToAscii } from '../../helpers/common'
 
 export class CategoryHandler {
+
+  static async ensureCategory (id: string) {
+    const category = await Category.get(id)
+
+    if (!category) {
+      return new Category(id).save()
+    }
+  }
+
   static async handleEventNftmartCreatedCategory (event : SubstrateEvent){
 
     const {event: { data: [category_id] }} = event;

@@ -100,6 +100,8 @@ type Transfer @entity {
   call: Call #create relation to call
   timestamp: Date
   isSuccess: Boolean
+
+  debug: String
 }
 
 type Category @entity {
@@ -107,6 +109,9 @@ type Category @entity {
 
   creator: Account
   name: String
+
+  orders: [Order] @derivedFrom(field: "category")
+
   debug: String
 }
 
@@ -117,6 +122,49 @@ type Class @entity {
   metadata: String
   name: String
   description: String
-  properties: Int
+
+  transferable: Boolean
+  burnable: Boolean
+
+  nfts: [Nft] @derivedFrom(field: "class")
+  debug: String
+}
+
+type Nft @entity {
+  id: ID!
+
+  tokenId: String
+  class: Class #create relation to class
+  burned: Boolean
+  orders: [Order] @derivedFrom(field: "nft")
+}
+
+type NftTransfer @entity {
+  id: ID!
+
+  from: Account
+  to: Account
+  nft: Nft
+
+  block: Block #create relation to block
+  extrinsic: Extrinsic #create relation to extrinsic
+  call: Call #create relation to call
+  timestamp: Date
+  isSuccess: Boolean
+
+  debug: String
+}
+
+type Order @entity {
+  id: ID!
+
+  currencyId: Int
+  deadline: Int
+  price: BigInt
+  owner: Account #create relation to Account
+  taker: Account #create relation to Account
+  nft: Nft #create relation to Nft
+  category: Category #create relation to category
+
   debug: String
 }

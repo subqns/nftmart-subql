@@ -8,6 +8,7 @@ import { AddressHandler } from './sub-handlers/address'
 import { TransferHandler } from './sub-handlers/transfer'
 import { CategoryHandler } from './sub-handlers/category'
 import { ClassHandler } from './sub-handlers/class'
+import { NftHandler } from './sub-handlers/nft'
 
 type EventDispatch = Dispatcher<SubstrateEvent>
 
@@ -35,6 +36,18 @@ export class EventHandler {
       {
         key: "nftmart-CreatedClass",
         handler: ClassHandler.handleEventNftmartCreatedClass
+      },
+      {
+        key: "nftmart-MintedToken",
+        handler: NftHandler.handleEventNftmartMintedToken
+      },
+      {
+        key: "nftmart-TransferredToken",
+        handler: NftHandler.handleEventNftmartTransferredToken
+      },
+      {
+        key: "nftmart-BurnedToken",
+        handler: NftHandler.handleEventNftmartBurnedToken
       }
     ])
   }

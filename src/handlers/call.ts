@@ -7,6 +7,8 @@ import { CategoryHandler } from './sub-handlers/category'
 import { ClassHandler } from './sub-handlers/class'
 import { Dispatcher } from '../helpers/dispatcher'
 import { TransferHandler } from './sub-handlers/transfer'
+import { NftHandler } from './sub-handlers/nft'
+import { OrderHandler } from './sub-handlers/order'
 import { AnyCall, CallDispatcher, DispatchedCallData } from './types'
 
 
@@ -38,6 +40,14 @@ export class CallHandler {
       {
         key: 'balances-transferKeepAlive',
         handler: TransferHandler.handleCallBalancesTransfer
+      },
+      {
+        key: 'nftmart-takeOrder',
+        handler: NftHandler.handleCallNftmartTakeOrder
+      },
+      {
+        key: 'nftmart-submitOrder',
+        handler: OrderHandler.handleCallNftmartSubmitOrder
       }
     ])
   }
