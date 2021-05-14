@@ -5,7 +5,7 @@
 import {Entity} from "@subql/types";
 import assert from 'assert';
 
-export class Order implements Entity {
+export class TakeOrder implements Entity {
 
     constructor(id: string) {
         this.id = id;
@@ -18,55 +18,49 @@ export class Order implements Entity {
 
     public deadline?: number;
 
-    public status?: string;
-
-    public expectedPrice?: bigint;
+    public expectedprice?: bigint;
 
     public acceptedPrice?: bigint;
-
-    public deposit?: bigint;
 
     public sellerId?: string;
 
     public buyerId?: string;
 
+    public status?: string;
+
     public nftId?: string;
 
     public categoryId?: string;
 
-    public timestamp?: Date;
+    public openedAt?: Date;
 
-    public blockId?: string;
-
-    public extrinsicId?: string;
-
-    public isSuccess?: boolean;
+    public closedAt?: Date;
 
     public debug?: string;
 
 
     async save(): Promise<void>{
         let id = this.id;
-        assert(id !== null, "Cannot save Order entity without an ID");
-        await store.set('Order', id.toString(), this);
+        assert(id !== null, "Cannot save TakeOrder entity without an ID");
+        await store.set('TakeOrder', id.toString(), this);
     }
     static async remove(id:string): Promise<void>{
-        assert(id !== null, "Cannot remove Order entity without an ID");
-        await store.remove('Order', id.toString());
+        assert(id !== null, "Cannot remove TakeOrder entity without an ID");
+        await store.remove('TakeOrder', id.toString());
     }
 
-    static async get(id:string): Promise<Order>{
-        assert(id !== null, "Cannot get Order entity without an ID");
-        const record = await store.get('Order', id.toString());
+    static async get(id:string): Promise<TakeOrder>{
+        assert(id !== null, "Cannot get TakeOrder entity without an ID");
+        const record = await store.get('TakeOrder', id.toString());
         if (record){
-            return Order.create(record);
+            return TakeOrder.create(record);
         }else{
             return;
         }
     }
 
     static create(record){
-        let entity = new Order(record.id);
+        let entity = new TakeOrder(record.id);
         Object.assign(entity,record);
         return entity;
     }

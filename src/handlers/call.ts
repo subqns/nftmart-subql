@@ -43,21 +43,29 @@ export class CallHandler {
       },
       {
         key: 'nftmart-takeOrder',
-        handler: NftHandler.handleCallNftmartTakeOrder
+        handler: OrderHandler.handleCallNftmartTakeOrder
       },
       {
         key: 'nftmart-submitOrder',
         handler: OrderHandler.handleCallNftmartSubmitOrder
+      },
+      {
+        key: 'nftmart-removeOrder',
+        handler: OrderHandler.handleCallNftmartRemoveOrder
       }
     ])
   }
 
-  get hash(): string {
-    return this.extrinsic.extrinsic.hash.toString()
+  get index(): string {
+    return `${this.blockNumber}-${this.extrinsic?.idx?.toString()}`
   }
 
   get blockHash(): string {
     return this.extrinsic.block.block.hash.toString()
+  }
+
+  get blockNumber(): string {
+    return this.extrinsic.block.block.header.number.toString()
   }
 
   get signer(): string {
@@ -77,7 +85,7 @@ export class CallHandler {
       isRoot: boolean,
       depth: number
     ) => {
-      const id = isRoot ? parentCallId : `${parentCallId}-${idx}`
+      const id = isRoot ? parentCallId : `${parentCallId}.${idx}`
       const method = data.method
       const section = data.section
       const args = data.args
@@ -96,7 +104,7 @@ export class CallHandler {
 
         call.parentCallId = isRoot ? '' : parentCallId
 
-        call.extrinsicId = parentCallId.split('-')[0]
+        call.extrinsicId = parentCallId.split('.')[0]
       } else {
         await ExtrinsicHandler.ensureExtrinsic(parentCallId)
 
@@ -122,7 +130,7 @@ export class CallHandler {
       } 
     }
 
-    await inner(this.extrinsic.extrinsic.method, this.hash, 0, true, 0)
+    await inner(this.extrinsic.extrinsic.method, this.index, 0, true, 0)
 
     return list
   }

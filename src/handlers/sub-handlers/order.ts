@@ -12,6 +12,18 @@ import { CategoryHandler } from './category'
 
 export class OrderHandler {
 
+  static async ensureOrder (id: string) {
+
+    const order = await Order.get(id)
+
+    if (!order) {
+      const order = new Order(id)
+
+      await order.save()
+    }
+
+  }
+
   static async handleCallNftmartSubmitOrder ({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
     const args = call.args
     /*
@@ -42,12 +54,95 @@ export class OrderHandler {
 
     const order = new Order(id)
 
-    order.ownerId = origin
+    order.sellerId = origin
     order.categoryId = categoryId
     order.nftId = `${classId}-${tokenId}`
-    order.price = price
+    order.expectedPrice = price
+    order.status = "Created"
+    order.timestamp = extrinsicHandler.timestamp
+    order.deadline = deadline
+    order.deposit = deposit
+    order.isSuccess = isSuccess
+    order.extrinsicId = extrinsicHandler.id.toString()
+    order.blockId = extrinsic.block.block.header.hash.toString()
     order.debug = args.toString()
 
     await order.save()
+  }
+
+  static async handleCallNftmartTakeOrder ({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
+    const args = call.args
+    /*
+    0 class_id
+    1 token_id
+    2 price
+    3 order_owner
+    */
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic)
+
+    const classId = args[0].toString()
+    const tokenId = args[1].toString()
+    const nftId = `${classId}-${tokenId}`;
+    await ClassHandler.ensureClass(classId);
+    await NftHandler.ensureNft(classId, tokenId)
+    const price = (args[2] as any).toBigInt()
+    const seller = args[3].toString()
+    const buyer = extrinsicHandler.signer.toString()
+    await AccountHandler.ensureAccount(seller)
+    await AccountHandler.ensureAccount(buyer)
+
+    const extrinsicHash = extrinsicHandler.id
+
+    // check if isSucess
+    await NftHandler.handleCallNftmartDoTransfer(id, classId, tokenId, seller, buyer)
+
+    const order = new Order(id)
+
+    order.sellerId = seller
+    order.buyerId = buyer
+    order.nftId = `${classId}-${tokenId}`
+    order.acceptedPrice = price
+    order.status = "Completed"
+    order.timestamp = extrinsicHandler.timestamp
+    order.extrinsicId = extrinsicHandler.id.toString()
+    order.blockId = extrinsic.block.block.header.hash.toString()
+    order.isSuccess = isSuccess
+    order.debug = args.toString()
+
+    await order.save()
+  }
+
+  static async handleCallNftmartRemoveOrder ({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
+    const args = call.args
+    /*
+    0 class_id
+    1 token_id
+    */
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic)
+
+    const classId = args[0].toString()
+    const tokenId = args[1].toString()
+    const nftId = `${classId}-${tokenId}`;
+    await ClassHandler.ensureClass(classId);
+    await NftHandler.ensureNft(classId, tokenId)
+    const signer = extrinsicHandler.signer.toString()
+    await AccountHandler.ensureAccount(signer)
+
+    const extrinsicHash = extrinsicHandler.id
+
+    const order = new Order(id)
+
+    order.sellerId = signer
+    order.nftId = `${classId}-${tokenId}`
+    order.status = "Cancelled"
+    order.timestamp = extrinsicHandler.timestamp
+    order.extrinsicId = extrinsicHandler.id.toString()
+    order.blockId = extrinsic.block.block.header.hash.toString()
+    order.isSuccess = isSuccess
+    order.debug = args.toString()
+
+    await order.save()
+  }
+  static async handleEventNftmart (event : SubstrateEvent){
   }
 }

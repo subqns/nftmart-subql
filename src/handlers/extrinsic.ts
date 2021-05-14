@@ -21,7 +21,7 @@ export class ExtrinsicHandler {
   }
 
   get id(): string {
-    return this.extrinsic?.extrinsic?.hash?.toString()
+    return `${this.extrinsic?.block?.block?.header?.number.toString()}-${this.extrinsic?.idx.toString()}`
   }
 
   get method(): string {

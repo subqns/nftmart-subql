@@ -60,28 +60,6 @@ export class NftHandler {
     }
   }
 
-  static async handleCallNftmartTakeOrder({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
-
-    const args = call.args
-    const extrinsicHandler = new ExtrinsicHandler(extrinsic)
-
-    const classId = args[0].toString()
-    const tokenId = args[1].toString()
-    const nftId = `${classId}-${tokenId}`;
-    await ClassHandler.ensureClass(classId);
-    await NftHandler.ensureNft(classId, tokenId)
-    const price = (args[2] as any).toBigInt()
-    const fromId = args[3].toString()
-    const toId = extrinsicHandler.signer.toString()
-    await AccountHandler.ensureAccount(fromId)
-    await AccountHandler.ensureAccount(toId)
-
-    const extrinsicHash = extrinsicHandler.id
-
-    // check if isSucess
-    await NftHandler.handleCallNftmartDoTransfer(id, classId, tokenId, fromId, toId)
-  }
-
   static async handleEventNftmartMintedToken (event : SubstrateEvent){
     // skip
     // can be inferred from the following events or corresponding calls that emit these events

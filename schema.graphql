@@ -78,6 +78,7 @@ type Account @entity {
 
   transferIn: [Transfer] @derivedFrom(field: "to")
   transferOut: [Transfer] @derivedFrom(field: "from")
+
 }
 
 type Token @entity {
@@ -160,11 +161,47 @@ type Order @entity {
 
   currencyId: Int
   deadline: Int
-  price: BigInt
-  owner: Account #create relation to Account
-  taker: Account #create relation to Account
+
+  status: String # one of Created / Cancelled / Completed
+
+  expectedPrice: BigInt
+  acceptedPrice: BigInt
+  deposit: BigInt
+
+  seller: Account #create relation to Account
+  buyer: Account #create relation to Account
+
   nft: Nft #create relation to Nft
   category: Category #create relation to category
+
+  timestamp: Date
+
+  block: Block #create relation to Block
+  extrinsic: Extrinsic #create relation to extrinsic
+  isSuccess: Boolean
+
+  debug: String
+}
+
+type TakeOrder @entity {
+  id: ID!
+
+  currencyId: Int
+  deadline: Int
+
+  expectedprice: BigInt
+  acceptedPrice: BigInt
+
+  seller: Account #create relation to Account
+  buyer: Account #create relation to Account
+
+  status: String # Canceled / Pending / Expired / Closed
+
+  nft: Nft #create relation to Nft
+  category: Category #create relation to category
+
+  openedAt: Date
+  closedAt: Date
 
   debug: String
 }

@@ -82,6 +82,10 @@ export class EventHandler {
     return i === 'null' ? undefined : i
   }
 
+  get extrinsicId () {
+    return `${this.blockNumber}-${this.event?.extrinsic?.idx?.toString()}`
+  }
+
   get id () {
     return `${this.blockNumber}-${this.index}`
   }
@@ -92,7 +96,7 @@ export class EventHandler {
     await BlockHandler.ensureBlock(this.blockHash)
 
     if (this.extrinsicHash) {
-      await ExtrinsicHandler.ensureExtrinsic(this.extrinsicHash)
+      await ExtrinsicHandler.ensureExtrinsic(this.extrinsicId)
     }
 
     event.index = this.index
@@ -103,7 +107,7 @@ export class EventHandler {
     event.blockId = this.blockHash
 
     if (this.extrinsicHash) {
-      event.extrinsicId = this.extrinsicHash;
+      event.extrinsicId = this.extrinsicId;
     }
 
     await this.dispatcher.dispatch(
