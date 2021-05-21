@@ -149,7 +149,6 @@ type NftTransfer @entity {
 
   block: Block #create relation to block
   extrinsic: Extrinsic #create relation to extrinsic
-  call: Call #create relation to call
   timestamp: Date
   isSuccess: Boolean
 

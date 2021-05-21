@@ -24,8 +24,6 @@ export class NftTransfer implements Entity {
 
     public extrinsicId?: string;
 
-    public callId?: string;
-
     public timestamp?: Date;
 
     public isSuccess?: boolean;

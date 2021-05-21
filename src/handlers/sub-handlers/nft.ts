@@ -39,7 +39,6 @@ export class NftHandler {
     nftTransfer.fromId = seller
     nftTransfer.nftId = nftId
     nftTransfer.extrinsicId = extrinsicHash
-    nftTransfer.callId = id
     nftTransfer.timestamp = extrinsicHandler.timestamp
     nftTransfer.isSuccess = isSuccess
     nftTransfer.blockId = extrinsic.block.block.hash.toString()
