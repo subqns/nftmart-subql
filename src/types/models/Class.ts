@@ -1,9 +1,11 @@
-// Copyright 2020-2021 OnFinality Limited authors & contributors
-// SPDX-License-Identifier: Apache-2.0
-
 // Auto-generated , DO NOT EDIT
 import {Entity} from "@subql/types";
 import assert from 'assert';
+
+import {
+    Metadata,
+} from '../interfaces'
+
 
 export class Class implements Entity {
 
@@ -16,7 +18,7 @@ export class Class implements Entity {
 
     public creatorId?: string;
 
-    public metadata?: string;
+    public metadata?: Metadata;
 
     public name?: string;
 
@@ -39,8 +41,8 @@ export class Class implements Entity {
         await store.remove('Class', id.toString());
     }
 
-    static async get(id:string): Promise<Class>{
-        assert(id !== null, "Cannot get Class entity without an ID");
+    static async get(id:string): Promise<Class | undefined>{
+        assert((id !== null && id !== undefined), "Cannot get Class entity without an ID");
         const record = await store.get('Class', id.toString());
         if (record){
             return Class.create(record);
@@ -48,6 +50,8 @@ export class Class implements Entity {
             return;
         }
     }
+
+
 
     static create(record){
         let entity = new Class(record.id);

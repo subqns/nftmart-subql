@@ -120,7 +120,7 @@ type Class @entity {
   id: ID!
 
   creator: Account
-  metadata: String
+  metadata: Metadata
   name: String
   description: String
 
@@ -209,4 +209,11 @@ enum OrderStatus {
   Created
   Completed
   Cancelled
+}
+
+type Metadata @jsonField {
+  description: String!
+  externalUrl: String!
+  name: String!
+  url: String!
 }

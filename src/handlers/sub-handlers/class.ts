@@ -29,7 +29,7 @@ export class ClassHandler {
     await AccountHandler.ensureAccount(origin)
     await AccountHandler.ensureAccount(owner.toString())
 
-    const metadata = hexToAscii(args[0].toString())
+    const metadata = JSON.parse(hexToAscii(args[0].toString()))
     const name = hexToAscii(args[1].toString())
     const description = hexToAscii(args[2].toString())
     const properties = Number(args[3].toString())
@@ -57,7 +57,7 @@ export class ClassHandler {
     const extrinsicHandler = new ExtrinsicHandler(extrinsic)
 
     const origin = args[0].toString()
-    const data = args[1].toString()
+    const data = JSON.parse(args[1].toString())
     const name = args[2].toString()
     const description = args[3].toString()
     const properties = Number(args[4].toString())

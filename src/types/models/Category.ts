@@ -1,9 +1,7 @@
-// Copyright 2020-2021 OnFinality Limited authors & contributors
-// SPDX-License-Identifier: Apache-2.0
-
 // Auto-generated , DO NOT EDIT
 import {Entity} from "@subql/types";
 import assert from 'assert';
+
 
 export class Category implements Entity {
 
@@ -31,8 +29,8 @@ export class Category implements Entity {
         await store.remove('Category', id.toString());
     }
 
-    static async get(id:string): Promise<Category>{
-        assert(id !== null, "Cannot get Category entity without an ID");
+    static async get(id:string): Promise<Category | undefined>{
+        assert((id !== null && id !== undefined), "Cannot get Category entity without an ID");
         const record = await store.get('Category', id.toString());
         if (record){
             return Category.create(record);
@@ -40,6 +38,8 @@ export class Category implements Entity {
             return;
         }
     }
+
+
 
     static create(record){
         let entity = new Category(record.id);
