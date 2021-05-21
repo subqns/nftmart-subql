@@ -13,36 +13,36 @@ import { ClassHandler } from './class'
 export class NftHandler {
 
   // 4829-3, 4499-3: TransferredToken
-  static async handleCallNftmartDoTransfer(id: string, classId: string, tokenId: string, from: string, to: string) {
-    //const args = call.args
+  static async handleCallNftmartDoTransfer({ id, call, extrinsic, isSuccess }: DispatchedCallData) {
+    const args = call.args
 
-    /*
     const extrinsicHandler = new ExtrinsicHandler(extrinsic)
 
-    const to = args[0].toString()
-    const from = extrinsicHandler.signer
+    const classId = args[0].toString()
+    const tokenId = args[1].toString()
+    const nftId = `${classId}-${tokenId}`;
+    await ClassHandler.ensureClass(classId);
+    await NftHandler.ensureNft(classId, tokenId)
+    const price = (args[2] as any).toBigInt()
+    const seller = args[3].toString()
+    const buyer = extrinsicHandler.signer.toString()
+    await AccountHandler.ensureAccount(seller)
+    await AccountHandler.ensureAccount(buyer)
+
     const extrinsicHash = extrinsicHandler.id
 
-    await AccountHandler.ensureAccount(to)
-    await AccountHandler.ensureAccount(from)
-    await CallHandler.ensureCall(id)
-    await this.ensureNft(nftId)
-    */
-    const nftId = `${classId}-${tokenId}`;
-    const nftTransfer = new NftTransfer(id) // todo: use nftId
+    const nftTransfer = new NftTransfer(nftId)
 
     nftTransfer.debug = `${nftId}`;
 
-    nftTransfer.toId = to
-    nftTransfer.fromId = from
+    nftTransfer.toId = buyer
+    nftTransfer.fromId = seller
     nftTransfer.nftId = nftId
-    /*
     nftTransfer.extrinsicId = extrinsicHash
     nftTransfer.callId = id
     nftTransfer.timestamp = extrinsicHandler.timestamp
     nftTransfer.isSuccess = isSuccess
     nftTransfer.blockId = extrinsic.block.block.hash.toString()
-    */
 
     await nftTransfer.save()
   }

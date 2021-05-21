@@ -50,7 +50,7 @@ type Event @entity {
   data: String!
 
   block: Block #create relation to block
-  extrinsic: Extrinsic #create relation to extrins
+  extrinsic: Extrinsic #create relation to extrinsic
 }
 
 type Call @entity {
@@ -204,4 +204,10 @@ type TakeOrder @entity {
   closedAt: Date
 
   debug: String
+}
+
+enum OrderStatus {
+  Created
+  Completed
+  Cancelled
 }

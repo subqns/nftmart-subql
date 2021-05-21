@@ -94,7 +94,9 @@ export class OrderHandler {
     const extrinsicHash = extrinsicHandler.id
 
     // check if isSucess
-    await NftHandler.handleCallNftmartDoTransfer(id, classId, tokenId, seller, buyer)
+    if (isSuccess) {
+      await NftHandler.handleCallNftmartDoTransfer({ id, call, extrinsic, isSuccess })
+    }
 
     const order = new Order(id)
 
