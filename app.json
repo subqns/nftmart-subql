@@ -2,7 +2,27 @@
   "name": "NFTMart SubQuery Project",
   "description": "A Professional NFT Marketplace",
   "repository": "https://github.com/subqns/nftmart-subql",
-  "logo": "https://github.com/subqns/nftmart-subql/raw/master/.github/nftmart.png",
-  "keywords": ["nftmart", "subquery", "subql", "graphql"],
-  "stack": "container"
+  "logo": "https://github.com/subqns/nftmart-subql/raw/nftmart/.github/nftmart.png",
+  "keywords": [
+    "nftmart",
+    "subquery",
+    "subql",
+    "graphql"
+  ],
+  "stack": "container",
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev",
+      "options": {
+        "version": "12"
+      }
+    }
+  ],
+  "env": {
+    "PGSSLMODE": {
+      "description": "SSL Mode for PG. Set it to no-verify",
+      "value": "no-verify",
+      "required": true
+    }
+  }
 }
