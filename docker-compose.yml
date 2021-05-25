@@ -22,10 +22,10 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     command:
-      - --name=acala
+      - --name=nftmart
       - --playground
   subql-node:
-    image: onfinality/subql-node:v0.13.0 # v0.14.0 crashes on block range [393, 492]
+    image: onfinality/subql-node:latest
     depends_on:
       - postgres
     restart: always
@@ -39,7 +39,7 @@ services:
       - ./:/app
     command:
       - -f=/app
-      - --subquery-name=acala
+      - --subquery-name=nftmart
       - --migrate
   pgadmin:
     image: dpage/pgadmin4
