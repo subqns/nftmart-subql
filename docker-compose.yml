@@ -94,6 +94,8 @@ services:
     restart: always
     ports:
       - 3306:3306
+    profiles:
+      - pg2mysql
     volumes:
       - ./init_db.sql:/docker-entrypoint-initdb.d/init_mysql.sql:ro
       - ./my.cnf:/etc/mysql/my.cnf:ro
@@ -107,6 +109,8 @@ services:
   #   dockerfile: ./Dockerfile.csvkit
     image: btwiuse/csvkit
     restart: always
+    profiles:
+      - pg2mysql
     command:
     # - cat
       - ./scripts/pg2mysql
@@ -120,9 +124,23 @@ services:
     image: phpmyadmin/phpmyadmin
     links:
       - mysql:db
+    profiles:
+      - pg2mysql
     ports:
       - 33060:80
     environment:
       MYSQL_USER: root
       MYSQL_PASSWORD: nftmart
       MYSQL_ROOT_PASSWORD: nftmart
+  postgrest:
+    image: postgrest/postgrest:latest
+    ports:
+      - "3020:3000"
+    environment:
+      # The standard connection URI format, documented at
+      # https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
+      - PGRST_DB_URI=postgres://postgres:postgres@postgres:5432/postgres
+      # The name of which database schema to expose to REST clients
+      - PGRST_DB_SCHEMA=subquery_1
+      # The database role to use when no client authentication is provided
+      - PGRST_DB_ANON_ROLE=postgres
