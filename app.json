@@ -1,0 +1,8 @@
+{
+  "name": "NFTMart SubQuery Project",
+  "description": "A Professional NFT Marketplace",
+  "repository": "https://github.com/subqns/nftmart-subql",
+  "logo": "https://github.com/subqns/nftmart-subql/raw/master/.github/nftmart.png",
+  "keywords": ["nftmart", "subquery", "subql", "graphql"],
+  "stack": "container"
+}

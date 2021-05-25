@@ -1,5 +1,6 @@
 # SubQuery - Starter Package
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/subqns/nftmart-subql)
 
 The Starter Package is an example that you can use as a starting point for developing your SubQuery project.
 A SubQuery package defines which data The SubQuery will index from the substrate network, and how it will store it. 
