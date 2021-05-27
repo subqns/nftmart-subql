@@ -1,5 +1,5 @@
 {
-  "name": "acala-subql",
+  "name": "@nftmart/subql",
   "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
@@ -7,9 +7,9 @@
     "build": "tsc -b",
     "test": "jest",
     "prepack": "rm -rf dist && npm build",
-    "codegen": "./node_modules/.bin/subql codegen",
+    "codegen": "subql codegen",
     "patch:types": "node scripts/patch-types.js",
-    "start": "./node_modules/.bin/subql-node -f . --local"
+    "start": "subql-node -f . --local"
   },
   "files": [
     "dist",
@@ -19,12 +19,23 @@
   "author": "qwer951123",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@acala-network/types": "^0.7.1",
+    "@acala-network/types": "^0.7.3",
+    "@babel/core": "^7.14.3",
     "@polkadot/api": "^4",
-    "@subql/cli": "latest",
-    "@subql/node": "^0.13.0",
-    "@subql/types": "latest",
+    "@subql/cli": "workspace:*",
+    "@subql/node": "workspace:*",
+    "@subql/types": "workspace:*",
+    "@types/babel__core": "^7",
+    "@types/eslint": "^7",
+    "eslint": "^7.27.0",
     "typescript": "^4.1.3",
+    "webpack": "^5.37.1",
     "yaml": "^1.10.0"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.3.19",
+    "g": "^2.0.1",
+    "graphql": "^15.5.0",
+    "subscriptions-transport-ws": "^0.9.18"
   }
 }

@@ -1,7 +1,6 @@
 import { SubstrateBlock } from '@subql/types'
 import { getBlockTimestamp } from '../helpers'
 import { Block } from '../types/models/Block'
-import { TokenHandler } from './sub-handlers/token'
 
 export class BlockHandler {
   private block: SubstrateBlock

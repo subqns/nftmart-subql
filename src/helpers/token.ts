@@ -1,4 +1,3 @@
-import { CurrencyId } from '@acala-network/types/interfaces'
 import { Codec } from '@polkadot/types/types'
 
 interface Token {
@@ -53,47 +52,6 @@ export const TOKEN_DECIMAL = {
 }
 
 export function resolveToken (token: Codec) {
-  if ((token as CurrencyId).isToken) {
-    const name = (token as CurrencyId).asToken.toString()
-
-    return {
-      name,
-      decimal: TOKEN_DECIMAL[name] || 18,
-      isDex: false,
-      isToken: true,
-      isERC20: false,
-    }
-  }
-
-  if ((token as CurrencyId).isDexShare) {
-    const _token = token as CurrencyId
-
-    const token1 = _token.asDexShare[0].toString()
-    const token2 = _token.asDexShare[1].toString()
-    const token1Decimal = TOKEN_DECIMAL[token1] || 18
-    const token2Decimal = TOKEN_DECIMAL[token2] || 18
-
-    const decimal = (token1Decimal > token2Decimal) ? token1Decimal : token2Decimal
-    const name = `${_token.asDexShare[0].toString()}-${_token.asDexShare[1].toString()}`
-
-    return {
-      name: name,
-      decimal,
-      isDex: true,
-      isToken: false,
-      isERC20: false,
-    }
-  }
-
-  if ((token as CurrencyId).isErc20) {
-    return {
-      name: (token as CurrencyId).asErc20.toString(),
-      isDex: false,
-      isToken: false,
-      isERC20: true,
-    }
-  }
-
   return {
     name: 'unknown',
     isDex: false,

@@ -1,5 +1,4 @@
 import { SubstrateExtrinsic } from '@subql/types'
-import { resolveToken } from '../../helpers/token'
 import { Token } from '../../types/models/Token'
 import { Transfer } from "../../types/models/Transfer"
 import { AnyCall } from '../types'
