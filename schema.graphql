@@ -217,3 +217,154 @@ type Metadata @jsonField {
   name: String!
   url: String!
 }
+
+
+type NftUser @entity {
+  id: ID!
+  description: String
+  avatar: String
+  nickname: String
+  media: String
+  feature: String
+  last_login_time: Date
+  last_login_ip: String
+  login_times: Int
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+
+  classes: [NftClass] @derivedFrom(field: "user")
+  nfts: [NftNft] @derivedFrom(field: "user")
+}
+
+
+type NftClass @entity {
+  id: ID!
+  name: String
+  logo: String
+  feature: String
+  category: NftCategory #create relation to nft_category
+  description: String
+  user: NftUser # create relation to nft_user
+  metadata: String!
+  authentication: Int
+  royalty: Int
+  owner: String
+  admins: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NftCategory @entity {
+  id: ID!
+  name: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NftNft @entity {
+  id: ID!
+  token_id: String
+  class: NftClass #create relation to nft_class
+  file_type: Int
+  cid: String
+  metadata: Metadata
+  authentication: Int
+  royalty: Int
+  user: NftUser # create relation to nft_user
+  creater: String
+  status: String
+  category_id: Int
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NftTradeRecord @entity {
+  id: ID!
+  nft_id: String
+  nft: NftNft # create relation to nft_nft
+  type: Int
+  block_height: String
+  block_hash: String
+  token: String
+  price: String
+  buyer: NftUser # create relation to nft_user
+  seller: NftUser # create relation to nft_user
+  direction: Int
+  status: Int
+  trade_id: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NfRebateRecord @entity {
+  id: ID!
+  trade: NftTradeRecord  # create relation to nft_trade_record
+  user: NftUser # create relation to nft_user
+  nft: NftNft # create relation to nft_nft
+  token: String
+  fee: String
+  rate: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NfBenefitRecord @entity {
+  id: ID!
+  trade: NftTradeRecord  # create relation to nft_trade_record
+  user: NftUser # create relation to nft_user
+  nft: NftNft # create relation to nft_nft
+  token: String
+  fee: String
+  rate: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NfTradeTaxRecord @entity {
+  id: ID!
+  trade: NftTradeRecord  # create relation to nft_trade_record
+  nft: NftNft # create relation to nft_nft
+  token: String
+  fee: String
+  rate: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+
+type NfCollectRecord @entity {
+  id: ID!
+  user: NftUser # create relation to nft_user
+  nft: NftNft # create relation to nft_nft
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NfTokenRecord @entity {
+  id: ID!
+  user: NftUser # create relation to nft_user
+  token: String
+  amount: String
+  type: Int
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type NfBrowseRecord @entity {
+  id: ID!
+  nft: NftNft # create relation to nft_nft
+  token: String
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
