@@ -76,25 +76,83 @@ export class NftHandler {
 		/// Price updated \[class_id, token_id, order_owner, price\]
 		UpdatedOrderPrice(ClassIdOf<T>, TokenIdOf<T>, T::AccountId, Balance),
     */
+
+    /* new master:
+
+    /// nftmartConf
+
+    /// Minted NFT token. \[from, to, class_id, token_id, quantity\]
+		MintedToken(T::AccountId, T::AccountId, ClassIdOf<T>, TokenIdOf<T>, TokenIdOf<T>),
+		/// Transferred NFT token. \[from, to, class_id, token_id, quantity\]
+		TransferredToken(T::AccountId, T::AccountId, ClassIdOf<T>, TokenIdOf<T>, TokenIdOf<T>),
+		/// Burned NFT token. \[owner, class_id, token_id, quantity, unreserved\]
+		BurnedToken(T::AccountId, ClassIdOf<T>, TokenIdOf<T>, TokenIdOf<T>, Balance),
+
+    */
+
+    const {event: { data: [who, to, class_id, token_id, quantity] }} = event;
+    let classId = class_id.toString();
+    let tokenId = token_id.toString();
+    let quant = Number(quantity.toString());
+    let id = `${classId}-${tokenId}`;
+
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+
+    await AccountHandler.ensureAccount(who.toString());
+    await AccountHandler.ensureAccount(to.toString());
+    await ClassHandler.ensureClass(class_id.toString());
+
+    const nft = new Nft(id);
+    nft.classId = classId;
+    nft.tokenId = tokenId;
+    nft.quantity = quant;
+
+    await nft.save();
   }
 
   static async handleEventNftmartTransferredToken (event : SubstrateEvent){
-    // ensure
-    // from
-    // to
-    // class_id
-    // token_id
-    // id=class_id-token_id
-    /*
-    const 
-    const id = `${classId}-${tokenId}` 
-    let nft = new NFT(id)
-    */
+
+    const {event: { data: [who, to, class_id, token_id, quantity] }} = event;
+    let classId = class_id.toString();
+    let tokenId = token_id.toString();
+    let nftId = `${classId}-${tokenId}`;
+    let quant = Number(quantity.toString());
+
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+
+    await AccountHandler.ensureAccount(who.toString());
+    await AccountHandler.ensureAccount(to.toString());
+    await ClassHandler.ensureClass(class_id.toString());
+    await NftHandler.ensureNft(classId, tokenId);
+
   }
 
   static async handleEventNftmartBurnedToken (event : SubstrateEvent){
-    // ensure
-    // 
+
+    const {event: { data: [who, class_id, token_id, quantity, deposit] }} = event;
+    let classId = class_id.toString();
+    let tokenId = token_id.toString();
+    let nftId = `${classId}-${tokenId}`;
+    let quant = Number(quantity.toString());
+    let depos = Number(deposit.toString());
+
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+
+    await AccountHandler.ensureAccount(who.toString());
+    await ClassHandler.ensureClass(classId);
+    await NftHandler.ensureNft(classId, tokenId);
+
+    const nft = await Nft.get(nftId);
+    nft.burned = true;
+    nft.save();
+
+    await nft.save();
   }
 
 }

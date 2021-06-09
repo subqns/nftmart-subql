@@ -9,6 +9,7 @@ import { TransferHandler } from './sub-handlers/transfer'
 import { CategoryHandler } from './sub-handlers/category'
 import { ClassHandler } from './sub-handlers/class'
 import { NftHandler } from './sub-handlers/nft'
+import { OrderHandler } from './sub-handlers/order'
 
 type EventDispatch = Dispatcher<SubstrateEvent>
 
@@ -30,8 +31,12 @@ export class EventHandler {
         handler: AddressHandler.handleEventSystemNewAccount
       },
       {
-        key: "nftmart-CreatedCategory",
+        key: "nftmartConf-CreatedCategory",
         handler: CategoryHandler.handleEventNftmartCreatedCategory
+      },
+      {
+        key: "nftmartConf-UpdatedCategory",
+        handler: CategoryHandler.handleEventNftmartUpdatedCategory
       },
       {
         key: "nftmart-CreatedClass",
@@ -48,7 +53,11 @@ export class EventHandler {
       {
         key: "nftmart-BurnedToken",
         handler: NftHandler.handleEventNftmartBurnedToken
-      }
+      },
+      {
+        key: 'nftmartOrder-CreatedOrder',
+        handler: OrderHandler.handleEventNftmartCreatedOrder
+      },
     ])
   }
 

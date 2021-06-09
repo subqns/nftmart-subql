@@ -16,6 +16,8 @@ export class NftTransfer implements Entity {
 
     public toId?: string;
 
+    public quantity?: number;
+
     public nftId?: string;
 
     public blockId?: string;
