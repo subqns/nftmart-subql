@@ -1,6 +1,7 @@
 import { SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
 import { Call } from '../../types/models/Call'
 import { Order } from "../../types/models/Order"
+import { OrderItem } from "../../types/models/OrderItem"
 import { CallHandler } from '../call'
 import { ExtrinsicHandler } from '../extrinsic'
 import { DispatchedCallData } from '../types'
@@ -24,6 +25,62 @@ export class OrderHandler {
 
   }
 
+  static async handleEventNftmartCreatedOrder (event : SubstrateEvent){
+
+    const {event: { data: [who, order_id] }} = event;
+    let orderId = order_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+
+    await AccountHandler.ensureAccount(who.toString());
+
+    const currencyId = args[0].toString()
+    const categoryId = args[1].toString()
+    const deposit = (args[2] as any).toBigInt()
+    const price = (args[3] as any).toBigInt()
+    const deadline = (args[4] as any).toBigInt()
+    const itemsJson = (args[5].toJSON() as number[][])
+
+    await OrderHandler.ensureOrder(orderId);
+    for (let i in itemsJson) {
+      let item = itemsJson[i]
+      const classId = `${item[0]}`
+      const tokenId = `${item[1]}`
+      const nftId = `${classId}-${tokenId}`
+      const quantity = item[2]
+      await ClassHandler.ensureClass(classId)
+      await NftHandler.ensureNft(classId, tokenId);
+      let orderItem = new OrderItem(`${orderId}-${i}`)
+      orderItem.nftId = nftId
+      orderItem.quantity = quantity
+      orderItem.orderId = orderId
+      await orderItem.save()
+      console.log(`created new order item`, classId, tokenId, quantity)
+    }
+
+    await AccountHandler.ensureAccount(origin)
+    await CategoryHandler.ensureCategory(categoryId)
+
+    const order = await Order.get(orderId)
+
+    order.sellerId = origin
+    order.categoryId = categoryId
+    order.expectedPrice = price
+    order.status = "Created"
+    order.timestamp = extrinsicHandler.timestamp
+    order.deadline = deadline
+    order.deposit = deposit
+    order.extrinsicId = extrinsicHandler.id.toString()
+    order.blockId = extrinsic.block.block.header.hash.toString()
+    order.debug = args.toString()
+
+    await order.save()
+  }
+
   static async handleCallNftmartSubmitOrder ({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
     const args = call.args
     /*
@@ -34,29 +91,52 @@ export class OrderHandler {
     4 token_id
     5 deposit
     6 deadline
+
+    0 currency_id
+    1 category_id
+    2 deposit
+    3 price
+    4 deadline
+    5 items
     */
     const extrinsicHandler = new ExtrinsicHandler(extrinsic)
 
     const origin = extrinsic.extrinsic.signer.toString()
     const currencyId = args[0].toString()
-    const price = (args[1] as any).toBigInt()
-    const categoryId = args[2].toString()
-    const classId = args[3].toString()
-    const tokenId = args[4].toString()
-    const deposit = (args[5] as any).toBigInt()
-    const deadline = (args[6] as any).toBigInt()
+    const categoryId = args[1].toString()
+    const deposit = (args[2] as any).toBigInt()
+    const price = (args[3] as any).toBigInt()
+    const deadline = (args[4] as any).toBigInt()
+    const itemsJson = (args[5].toJSON() as number[][])
+
+    await OrderHandler.ensureOrder(id);
+    for (let i in itemsJson) {
+      let item = itemsJson[i]
+      const classId = `${item[0]}`
+      const tokenId = `${item[1]}`
+      const nftId = `${classId}-${tokenId}`
+      const quantity = item[2]
+      await ClassHandler.ensureClass(classId)
+      await NftHandler.ensureNft(classId, tokenId);
+      let orderItem = new OrderItem(`${id}-${i}`)
+      orderItem.nftId = nftId
+      orderItem.quantity = quantity
+      orderItem.orderId = id
+      await orderItem.save()
+      console.log(`created new order item`, classId, tokenId, quantity)
+    }
 
     await AccountHandler.ensureAccount(origin)
     await CallHandler.ensureCall(id)
     await CategoryHandler.ensureCategory(categoryId)
-    await ClassHandler.ensureClass(classId)
-    await NftHandler.ensureNft(classId, tokenId)
+    // await ClassHandler.ensureClass(classId)
+    // await NftHandler.ensureNft(classId, tokenId)
 
-    const order = new Order(id)
+    const order = await Order.get(id)
 
     order.sellerId = origin
     order.categoryId = categoryId
-    order.nftId = `${classId}-${tokenId}`
+    // order.nftId = `${classId}-${tokenId}`
     order.expectedPrice = price
     order.status = "Created"
     order.timestamp = extrinsicHandler.timestamp

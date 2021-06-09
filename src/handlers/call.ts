@@ -41,18 +41,20 @@ export class CallHandler {
         key: 'balances-transferKeepAlive',
         handler: TransferHandler.handleCallBalancesTransfer
       },
+      /*
       {
-        key: 'nftmart-takeOrder',
-        handler: OrderHandler.handleCallNftmartTakeOrder
-      },
-      {
-        key: 'nftmart-submitOrder',
+        key: 'nftmartOrder-submitOrder',
         handler: OrderHandler.handleCallNftmartSubmitOrder
       },
       {
-        key: 'nftmart-removeOrder',
+        key: 'nftmartOrder-takeOrder',
+        handler: OrderHandler.handleCallNftmartTakeOrder
+      },
+      {
+        key: 'nftmartOrder-removeOrder',
         handler: OrderHandler.handleCallNftmartRemoveOrder
       }
+      */
     ])
   }
 

@@ -137,6 +137,7 @@ type Nft @entity {
   tokenId: String
   class: Class #create relation to class
   burned: Boolean
+  quantity: Int
   orders: [Order] @derivedFrom(field: "nft")
 }
 
@@ -145,6 +146,7 @@ type NftTransfer @entity {
 
   from: Account
   to: Account
+  quantity: Int
   nft: Nft
 
   block: Block #create relation to block
@@ -153,6 +155,14 @@ type NftTransfer @entity {
   isSuccess: Boolean
 
   debug: String
+}
+
+type OrderItem @entity {
+  id: ID!
+
+  nft: Nft!
+  quantity: Int!
+  order: Order
 }
 
 type Order @entity {
@@ -172,6 +182,8 @@ type Order @entity {
 
   nft: Nft #create relation to Nft
   category: Category #create relation to category
+
+  items: [OrderItem] @derivedFrom(field: "order")
 
   timestamp: Date
 
@@ -374,3 +386,27 @@ type BadData @entity {
   data: String
   reason: String
 }
+
+type RwCache @entity {
+  id: ID!
+  string: String
+  int: Int
+  boolean: Boolean
+  date: Date
+  foreignKey: Foreign
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+
+type Foreign @entity {
+  id: ID!
+  string: String
+  int: Int
+  boolean: Boolean
+  date: Date
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date
+}
+

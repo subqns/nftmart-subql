@@ -18,6 +18,8 @@ export class Nft implements Entity {
 
     public burned?: boolean;
 
+    public quantity?: number;
+
 
     async save(): Promise<void>{
         let id = this.id;
