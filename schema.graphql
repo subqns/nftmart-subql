@@ -368,3 +368,9 @@ type NfBrowseRecord @entity {
   updated_at: Date
   deleted_at: Date
 }
+
+type BadData @entity {
+  id: ID!
+  data: String
+  reason: String
+}
