@@ -28,6 +28,8 @@ export class Class implements Entity {
 
     public burnable?: boolean;
 
+    public royaltiesChargeable?: boolean;
+
     public debug?: string;
 
 

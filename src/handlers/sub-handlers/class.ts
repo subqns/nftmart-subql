@@ -36,6 +36,7 @@ export class ClassHandler {
     const properties = Number(args[3].toString())
     const transferable = properties | 0b00000001
     const burnable = (properties | 0b00000010) >> 1
+    const royaltiesChargeable = (properties | 0b00000100) >> 2
     const id = class_id.toString()
     const metadataStr = hexToAscii(args[0].toString());
     const metadata = await (async function(){
@@ -59,36 +60,26 @@ export class ClassHandler {
     clas.description = description
     clas.transferable = !!transferable
     clas.burnable = !!burnable
+    clas.royaltiesChargeable = !!royaltiesChargeable
 
     clas.debug = args.toString()
 
     await clas.save()
   }
 
-  static async handleCallNftmartCreateClass ({ id, call, extrinsic, isSuccess } : DispatchedCallData) {
-    const args = call.args
-    const extrinsicHandler = new ExtrinsicHandler(extrinsic)
+  static async handleEventNftmartDestroyedClass (event : SubstrateEvent){
 
-    const origin = args[0].toString()
-    const data = JSON.parse(args[1].toString())
-    const name = args[2].toString()
-    const description = args[3].toString()
-    const properties = Number(args[4].toString())
-    const transferable = properties | 0b00000001
-    const burnable = (properties | 0b00000010) >> 1
+    const {event: { data: [who, class_id, dest] }} = event;
+    let classId = class_id.toString();
+    let destId = dest.toString();
 
-    await AccountHandler.ensureAccount(origin)
-    await CallHandler.ensureCall(id)
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
 
-    const clas = new Class(id)
+    await AccountHandler.ensureAccount(who.toString());
+    await ClassHandler.ensureClass(classId);
 
-    clas.creatorId = origin
-    clas.metadata = data
-    clas.name = name
-    clas.description = description
-    clas.transferable = !!transferable
-    clas.burnable = !!burnable
-
-    await clas.save()
   }
+
 }

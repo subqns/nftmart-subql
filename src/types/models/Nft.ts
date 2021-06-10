@@ -20,6 +20,20 @@ export class Nft implements Entity {
 
     public quantity?: number;
 
+    public deposit?: bigint;
+
+    public eventId?: string;
+
+    public creatorId?: string;
+
+    public royalty?: boolean;
+
+    public royaltyBeneficiaryId?: string;
+
+    public metadata?: string;
+
+    public debug?: string;
+
 
     async save(): Promise<void>{
         let id = this.id;

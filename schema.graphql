@@ -78,7 +78,6 @@ type Account @entity {
 
   transferIn: [Transfer] @derivedFrom(field: "to")
   transferOut: [Transfer] @derivedFrom(field: "from")
-
 }
 
 type Token @entity {
@@ -126,6 +125,7 @@ type Class @entity {
 
   transferable: Boolean
   burnable: Boolean
+  royaltiesChargeable: Boolean
 
   nfts: [Nft] @derivedFrom(field: "class")
   debug: String
@@ -139,6 +139,16 @@ type Nft @entity {
   burned: Boolean
   quantity: Int
   orderItems: [OrderItem] @derivedFrom(field: "nft")
+
+  # TokenData
+  deposit: BigInt
+  event: Event
+  creator: Account
+  royalty: Boolean
+  royaltyBeneficiary: Account
+  metadata: String
+
+  debug: String
 }
 
 type NftTransfer @entity {

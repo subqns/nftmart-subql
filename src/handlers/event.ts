@@ -38,9 +38,23 @@ export class EventHandler {
         key: "nftmartConf-UpdatedCategory",
         handler: CategoryHandler.handleEventNftmartUpdatedCategory
       },
+      /*
+      {
+        key: "nftmartConf-AddWhitelist",
+        handler: AccountHandler.handleEventNftmartAddWhitelist
+      },
+      {
+        key: "nftmartConf-RemoveWhitelist",
+        handler: AccountHandler.handleEventNftmartRemoveWhitelist
+      },
+      */
       {
         key: "nftmart-CreatedClass",
         handler: ClassHandler.handleEventNftmartCreatedClass
+      },
+      {
+        key: "nftmart-DestroyedClass",
+        handler: ClassHandler.handleEventNftmartDestroyedClass
       },
       {
         key: "nftmart-MintedToken",
