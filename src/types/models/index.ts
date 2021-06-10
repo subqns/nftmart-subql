@@ -32,6 +32,10 @@ export {Order} from "./Order"
 
 export {TakeOrder} from "./TakeOrder"
 
+export {OrderStatus} from "./OrderStatus"
+
+export {OrderDirection} from "./OrderDirection"
+
 export {NftUser} from "./NftUser"
 
 export {NftClass} from "./NftClass"

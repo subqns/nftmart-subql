@@ -41,7 +41,7 @@ export class CallHandler {
         key: 'balances-transferKeepAlive',
         handler: TransferHandler.handleCallBalancesTransfer
       },
-      /*
+      /* deprecated in favor of event handlers, since orders now can be identified with a global id
       {
         key: 'nftmartOrder-submitOrder',
         handler: OrderHandler.handleCallNftmartSubmitOrder

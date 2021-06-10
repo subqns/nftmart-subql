@@ -16,11 +16,11 @@ export class Order implements Entity {
 
     public deadline?: number;
 
-    public status?: string;
+    public intentId?: string;
 
-    public expectedPrice?: bigint;
+    public statusId?: string;
 
-    public acceptedPrice?: bigint;
+    public price?: bigint;
 
     public deposit?: bigint;
 
@@ -28,17 +28,13 @@ export class Order implements Entity {
 
     public buyerId?: string;
 
-    public nftId?: string;
-
     public categoryId?: string;
 
-    public timestamp?: Date;
+    public eventCreatedId?: string;
 
-    public blockId?: string;
+    public eventCancelledId?: string;
 
-    public extrinsicId?: string;
-
-    public isSuccess?: boolean;
+    public eventCompletedId?: string;
 
     public debug?: string;
 

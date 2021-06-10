@@ -138,7 +138,7 @@ type Nft @entity {
   class: Class #create relation to class
   burned: Boolean
   quantity: Int
-  orders: [Order] @derivedFrom(field: "nft")
+  orderItems: [OrderItem] @derivedFrom(field: "nft")
 }
 
 type NftTransfer @entity {
@@ -171,25 +171,22 @@ type Order @entity {
   currencyId: Int
   deadline: Int
 
-  status: String # one of Created / Cancelled / Completed
+  intent: OrderDirection # String # one of Buy / Sell
+  status: OrderStatus # String # one of Created / Cancelled / Completed
 
-  expectedPrice: BigInt
-  acceptedPrice: BigInt
+  price: BigInt
   deposit: BigInt
 
   seller: Account #create relation to Account
   buyer: Account #create relation to Account
 
-  nft: Nft #create relation to Nft
   category: Category #create relation to category
 
   items: [OrderItem] @derivedFrom(field: "order")
 
-  timestamp: Date
-
-  block: Block #create relation to Block
-  extrinsic: Extrinsic #create relation to extrinsic
-  isSuccess: Boolean
+  eventCreated: Event #create relation to event
+  eventCancelled: Event #create relation to event
+  eventCompleted: Event #create relation to event
 
   debug: String
 }
@@ -217,10 +214,14 @@ type TakeOrder @entity {
   debug: String
 }
 
-enum OrderStatus {
-  Created
-  Completed
-  Cancelled
+type OrderStatus @entity {
+  id: ID! # one of Created / Completed / Cancelled
+  orders: [Order] @derivedFrom(field: "status")
+}
+
+type OrderDirection @entity {
+  id: ID! # one of Buy / Sell
+  orders: [Order] @derivedFrom(field: "intent")
 }
 
 type Metadata @jsonField {

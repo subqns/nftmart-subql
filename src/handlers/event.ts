@@ -58,6 +58,30 @@ export class EventHandler {
         key: 'nftmartOrder-CreatedOrder',
         handler: OrderHandler.handleEventNftmartCreatedOrder
       },
+      {
+        key: 'nftmartOrder-CreatedOrder',
+        handler: OrderHandler.handleEventNftmartCreatedOrder2
+      },
+      {
+        key: 'nftmartOrder-TakenOrder',
+        handler: OrderHandler.handleEventNftmartTakenOrder
+      },
+      {
+        key: 'nftmartOrder-RemovedOrder',
+        handler: OrderHandler.handleEventNftmartRemovedOrder
+      },
+      {
+        key: 'nftmartOrder-CreatedOffer',
+        handler: OrderHandler.handleEventNftmartCreatedOffer
+      },
+      {
+        key: 'nftmartOrder-TakenOffer',
+        handler: OrderHandler.handleEventNftmartTakenOffer
+      },
+      {
+        key: 'nftmartOrder-RemovedOffer',
+        handler: OrderHandler.handleEventNftmartRemovedOffer
+      },
     ])
   }
 
@@ -119,11 +143,12 @@ export class EventHandler {
       event.extrinsicId = this.extrinsicId;
     }
 
+    await event.save()
+
     await this.dispatcher.dispatch(
       `${this.section}-${this.method}`,
       this.event
     );
 
-    await event.save()
   }
 }
