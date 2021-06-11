@@ -8,6 +8,8 @@ export {Block} from "./Block"
 
 export {Extrinsic} from "./Extrinsic"
 
+export {NftView} from "./NftView"
+
 export {Event} from "./Event"
 
 export {Call} from "./Call"

@@ -12,6 +12,8 @@ export class Block implements Entity {
 
     public id: string;
 
+    public uuid?: string;
+
     public number?: bigint;
 
     public timestamp?: Date;

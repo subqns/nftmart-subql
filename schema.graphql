@@ -11,6 +11,7 @@ type Address @entity {
 
 type Block @entity {
   id: ID!
+  uuid: Uuid
 
   number: BigInt
   timestamp: Date
@@ -39,6 +40,19 @@ type Extrinsic @entity {
 
   events: [Event] @derivedFrom(field: "extrinsic")
   calls: [Call] @derivedFrom(field: "extrinsic")
+}
+
+# still need to specify id on graphql client
+# however block.uuid created by node are populated automatically 
+type NftView @entity {
+  id: Uuid
+  id2: Uuid
+
+  viewer: Account!
+  nft: Nft!
+  timestamp: Date
+  created_at: Date
+  updated_at: Date
 }
 
 type Event @entity {
@@ -147,6 +161,8 @@ type Nft @entity {
   royalty: Boolean
   royaltyBeneficiary: Account
   metadata: String
+
+  views: [NftView] @derivedFrom(field: "nft")
 
   debug: String
 }
