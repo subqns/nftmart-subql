@@ -26,6 +26,8 @@ export class Nft implements Entity {
 
     public creatorId?: string;
 
+    public ownerId?: string;
+
     public royalty?: boolean;
 
     public royaltyBeneficiaryId?: string;

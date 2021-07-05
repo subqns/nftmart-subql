@@ -9,6 +9,7 @@ import { DispatchedCallData } from '../types'
 import { AccountHandler } from './account'
 import { hexToAscii } from '../../helpers/common'
 import { ClassHandler } from './class'
+import { api, logger } from '@subql/types'
 
 export class NftHandler {
 
@@ -97,13 +98,16 @@ export class NftHandler {
     */
 
     const {event: { data: [who, to, class_id, token_id, quantity] }} = event;
+    const whoId = who.toString();
+    const toId = to.toString();
     let classId = class_id.toString();
     let tokenId = token_id.toString();
     let quant = Number(quantity.toString());
     let id = `${classId}-${tokenId}`;
 
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
-    const Args = event.extrinsic?.extrinsic?.method?.args;
+    // const Args = event.extrinsic?.extrinsic?.args;
+    // console.log(Args.toString())
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
@@ -117,22 +121,20 @@ export class NftHandler {
     nft.tokenId = tokenId;
     nft.quantity = quant;
 
-    const args = JSON.parse(Args.toString())[1].args.call.args;
-    nft.debug = JSON.stringify(args);
+    let metadata = await api.query.ormlNft.tokens(classId, tokenId);
+    if (!metadata.isEmpty){
+      nft.debug = JSON.stringify(metadata.toString());
+      let metadataStr = hexToAscii((metadata.toJSON() as any).metadata);
+      let chargeRoyalty = (metadata.toJSON() as any).data.royalty;
+      nft.royalty = chargeRoyalty;
+      nft.metadata = metadataStr;
+    }
 
-    const toId = args.to.id;
-    // const classId = args[1].toString();
-    const metadataStr = hexToAscii(args.metadata);
-    // const quantity = Number(args[3].toString());
-    const chargeRoyalty = args.charge_royalty // args[4].toJSON() as boolean; // is None or false
+    // console.log(metadataStr, chargeRoyalty);
 
-    const clas = await Class.get(classId);
-
-    nft.royalty = chargeRoyalty ?? clas.royaltiesChargeable;
     nft.royaltyBeneficiaryId = toId;
     nft.creatorId = toId;
     nft.eventId = eventId;
-    nft.metadata = metadataStr;
 
     await nft.save();
   }

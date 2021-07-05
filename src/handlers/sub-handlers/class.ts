@@ -24,12 +24,16 @@ export class ClassHandler {
   static async handleEventNftmartCreatedClass (event : SubstrateEvent){
 
     const {event: { data: [owner, class_id] }} = event;
-    const origin = event.extrinsic?.extrinsic?.signer?.toString()
+    const origin = event.extrinsic?.extrinsic?.signer?.toString() // creator
+    const ownerId = owner.toString()
     const args = event.extrinsic?.extrinsic?.method.args
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
 
     await AccountHandler.ensureAccount(origin)
-    await AccountHandler.ensureAccount(owner.toString())
+    await AccountHandler.ensureAccount(ownerId)
+
+    // console.log(`origin:`, origin)
+    // console.log(`owner:`, ownerId)
 
     const name = hexToAscii(args[1].toString())
     const description = hexToAscii(args[2].toString())
@@ -54,7 +58,8 @@ export class ClassHandler {
 
     const clas = new Class(id)
 
-    clas.creatorId = owner.toString()
+    clas.ownerId = ownerId
+    clas.creatorId = origin
     clas.metadata = metadata
     clas.name = name
     clas.description = description

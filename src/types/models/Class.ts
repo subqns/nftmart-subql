@@ -16,6 +16,8 @@ export class Class implements Entity {
 
     public id: string;
 
+    public ownerId?: string;
+
     public creatorId?: string;
 
     public metadata?: Metadata;

@@ -1,14 +1,3 @@
-type Address @entity {
-
-  id: ID! #id is a required field
-
-  address: String!
-
-  creationBlock: BigInt!
-
-  creationTime: Date!
-}
-
 type Block @entity {
   id: ID!
   uuid: Uuid
@@ -42,19 +31,6 @@ type Extrinsic @entity {
   calls: [Call] @derivedFrom(field: "extrinsic")
 }
 
-# still need to specify id on graphql client
-# however block.uuid created by node are populated automatically 
-type NftView @entity {
-  id: Uuid
-  id2: Uuid
-
-  viewer: Account!
-  nft: Nft!
-  timestamp: Date
-  created_at: Date
-  updated_at: Date
-}
-
 type Event @entity {
   id: ID!
 
@@ -84,8 +60,35 @@ type Call @entity {
   calls: [Call] @derivedFrom(field: "parentCall")
 }
 
+type Nft @entity {
+  id: ID!
+
+  tokenId: String
+  class: Class #create relation to class
+  burned: Boolean
+  quantity: Int
+  orderItems: [OrderItem] @derivedFrom(field: "nft")
+
+  # TokenData
+  deposit: BigInt
+  event: Event
+  creator: Account
+  owner: Account
+  royalty: Boolean
+  royaltyBeneficiary: Account
+  metadata: String
+
+  # views: [NftView] @derivedFrom(field: "nft")
+
+  debug: String
+}
+
 type Account @entity {
   id: ID!
+
+  ownedNfts: [Nft] @derivedFrom(field: "owner")
+  createdNfts: [Nft] @derivedFrom(field: "creator")
+  createdClasses: [Class] @derivedFrom(field: "creator")
 
   extrinsics: [Extrinsic] @derivedFrom(field: "signer")
   calls: [Call] @derivedFrom(field: "signer")
@@ -129,9 +132,11 @@ type Category @entity {
   debug: String
 }
 
+# TODO: rename to collection ?
 type Class @entity {
   id: ID!
 
+  owner: Account
   creator: Account
   metadata: Metadata
   name: String
@@ -142,28 +147,6 @@ type Class @entity {
   royaltiesChargeable: Boolean
 
   nfts: [Nft] @derivedFrom(field: "class")
-  debug: String
-}
-
-type Nft @entity {
-  id: ID!
-
-  tokenId: String
-  class: Class #create relation to class
-  burned: Boolean
-  quantity: Int
-  orderItems: [OrderItem] @derivedFrom(field: "nft")
-
-  # TokenData
-  deposit: BigInt
-  event: Event
-  creator: Account
-  royalty: Boolean
-  royaltyBeneficiary: Account
-  metadata: String
-
-  views: [NftView] @derivedFrom(field: "nft")
-
   debug: String
 }
 
@@ -256,7 +239,6 @@ type Metadata @jsonField {
   name: String!
   url: String!
 }
-
 
 type NftUser @entity {
   id: ID!
@@ -413,27 +395,3 @@ type BadData @entity {
   data: String
   reason: String
 }
-
-type RwCache @entity {
-  id: ID!
-  string: String
-  int: Int
-  boolean: Boolean
-  date: Date
-  foreignKey: Foreign
-  created_at: Date
-  updated_at: Date
-  deleted_at: Date
-}
-
-type Foreign @entity {
-  id: ID!
-  string: String
-  int: Int
-  boolean: Boolean
-  date: Date
-  created_at: Date
-  updated_at: Date
-  deleted_at: Date
-}
-

@@ -33,7 +33,7 @@ export class CategoryHandler {
       ).args.metadata
     )
 
-    // console.log('metadataStr', metadataStr);
+    console.log('metadataStr', metadataStr);
     const metadata = await (async function(){
       try {
         return JSON.parse(metadataStr);

@@ -4,7 +4,6 @@ import { BlockHandler } from './block'
 import { ExtrinsicHandler } from './extrinsic'
 import { Dispatcher } from '../helpers/dispatcher'
 import { AccountHandler } from './sub-handlers/account'
-import { AddressHandler } from './sub-handlers/address'
 import { TransferHandler } from './sub-handlers/transfer'
 import { CategoryHandler } from './sub-handlers/category'
 import { ClassHandler } from './sub-handlers/class'
@@ -26,10 +25,12 @@ export class EventHandler {
 
   private registerDispatcherHandler () {
     this.dispatcher.batchRegist([
+      /*
       {
         key: 'system-NewAccount',
         handler: AddressHandler.handleEventSystemNewAccount
       },
+      */
       {
         key: "nftmartConf-CreatedCategory",
         handler: CategoryHandler.handleEventNftmartCreatedCategory
