@@ -28,33 +28,9 @@ export {OrderItem} from "./OrderItem"
 
 export {Order} from "./Order"
 
-export {TakeOrder} from "./TakeOrder"
-
 export {OrderStatus} from "./OrderStatus"
 
 export {OrderDirection} from "./OrderDirection"
-
-export {NftUser} from "./NftUser"
-
-export {NftClass} from "./NftClass"
-
-export {NftCategory} from "./NftCategory"
-
-export {NftNft} from "./NftNft"
-
-export {NftTradeRecord} from "./NftTradeRecord"
-
-export {NfRebateRecord} from "./NfRebateRecord"
-
-export {NfBenefitRecord} from "./NfBenefitRecord"
-
-export {NfTradeTaxRecord} from "./NfTradeTaxRecord"
-
-export {NfCollectRecord} from "./NfCollectRecord"
-
-export {NfTokenRecord} from "./NfTokenRecord"
-
-export {NfBrowseRecord} from "./NfBrowseRecord"
 
 export {BadData} from "./BadData"
 
