@@ -10,6 +10,7 @@ import { AccountHandler } from './account'
 import { hexToAscii } from '../../helpers/common'
 import { ClassHandler } from './class'
 import { api, logger } from '@subql/types'
+import { BadData } from "../../types/models/BadData"
 
 export class NftHandler {
 
@@ -121,19 +122,48 @@ export class NftHandler {
     nft.tokenId = tokenId;
     nft.quantity = quant;
 
-    let metadata = await api.query.ormlNft.tokens(classId, tokenId);
-    if (!metadata.isEmpty){
-      nft.debug = JSON.stringify(metadata.toString());
-      let metadataStr = hexToAscii((metadata.toJSON() as any).metadata);
-      let chargeRoyalty = (metadata.toJSON() as any).data.royalty;
+    let tokendata = await api.query.ormlNft.tokens(classId, tokenId);
+    let metadataStr = '{}';
+    /*
+    {
+      "metadata": "0x64656d6f206e6674206d65746164617461",
+      "data": {
+        "deposit": 11700000000,
+        "createBlock": 15109,
+        "royalty": true,
+        "creator": "65ADzWZUAKXQGZVhQ7ebqRdqEzMEftKytB8a7rknW82EASXB",
+        "royalty_beneficiary": "65ADzWZUAKXQGZVhQ7ebqRdqEzMEftKytB8a7rknW82EASXB"
+      },
+      "quantity": 20
+    }
+    */
+    if (!tokendata.isEmpty){
+      let tokenjson = tokendata.toJSON() as any
+      nft.debug = JSON.stringify(tokendata.toString());
+      let chargeRoyalty = tokenjson.data.royalty;
+      let quantity = tokenjson.quantity;
       nft.royalty = chargeRoyalty;
-      nft.metadata = metadataStr;
+      // nft.metadata = metadataStr;
+      let metadataStr = hexToAscii(tokenjson.metadata);
+      console.log('metadataStr', metadataStr);
+      nft.metadata = await (async function(){
+        try {
+          return JSON.parse(metadataStr);
+        } catch(e) {
+          const badData = new BadData(`${blockHeight}-event-${id}`);
+          badData.data = metadataStr;
+          badData.reason = `${e}`;
+          await badData.save();
+        }
+        return {}
+      })();
     }
 
     // console.log(metadataStr, chargeRoyalty);
 
     nft.royaltyBeneficiaryId = toId;
     nft.creatorId = toId;
+    nft.ownerId = toId;
     nft.eventId = eventId;
 
     await nft.save();
@@ -155,7 +185,6 @@ export class NftHandler {
     await AccountHandler.ensureAccount(to.toString());
     await ClassHandler.ensureClass(class_id.toString());
     await NftHandler.ensureNft(classId, tokenId);
-
   }
 
   static async handleEventNftmartBurnedToken (event : SubstrateEvent){
