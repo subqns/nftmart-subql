@@ -2,6 +2,10 @@
 import {Entity, store} from "@subql/types";
 import assert from 'assert';
 
+import {
+    Metadata,
+} from '../interfaces'
+
 
 export class Nft implements Entity {
 
@@ -32,7 +36,7 @@ export class Nft implements Entity {
 
     public royaltyBeneficiaryId?: string;
 
-    public metadata?: string;
+    public metadata?: Metadata;
 
     public debug?: string;
 

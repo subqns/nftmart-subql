@@ -76,7 +76,7 @@ type Nft @entity {
   owner: Account
   royalty: Boolean
   royaltyBeneficiary: Account
-  metadata: String
+  metadata: Metadata
 
   # views: [NftView] @derivedFrom(field: "nft")
 
