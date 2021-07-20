@@ -51,4 +51,3 @@ Thumbs.db
 # docker volumn
 .data
 data
-src/types
