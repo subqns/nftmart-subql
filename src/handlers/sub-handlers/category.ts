@@ -7,6 +7,7 @@ import { ExtrinsicHandler } from '../extrinsic'
 import { DispatchedCallData } from '../types'
 import { AccountHandler } from './account'
 import { hexToAscii } from '../../helpers/common'
+import { api, logger } from '@subql/types'
 
 export class CategoryHandler {
 
@@ -27,11 +28,11 @@ export class CategoryHandler {
 
     await AccountHandler.ensureAccount(origin)
 
-    const metadataStr = hexToAscii(
-      JSON.parse(
-        event.extrinsic?.extrinsic?.method.args.toString()
-      ).args.metadata
-    )
+    const cat = await api.query.nftmartConf.categories(id);
+
+    const categoryData = (cat as any).unwrap();
+
+    const metadataStr = `${categoryData.metadata.toHuman()}`;
 
     console.log('metadataStr', metadataStr);
     const metadata = await (async function(){
