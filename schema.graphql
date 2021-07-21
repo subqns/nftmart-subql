@@ -211,10 +211,11 @@ type OrderDirection @entity {
 }
 
 type Metadata @jsonField {
-  description: String!
-  externalUrl: String!
   name: String!
-  url: String!
+  description: String!
+  stub: String! # path
+  featuredUrl: String! # ipfs hash
+  logoUrl: String! # ipfs hash
 }
 
 type BadData @entity {

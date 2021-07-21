@@ -43,6 +43,7 @@ export class ClassHandler {
     const royaltiesChargeable = (properties | 0b00000100) >> 2
     const id = class_id.toString()
     const metadataStr = hexToAscii(args[0].toString());
+    console.log(metadataStr);
     const metadata = await (async function(){
       try {
         return JSON.parse(metadataStr);

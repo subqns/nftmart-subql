@@ -4,13 +4,15 @@
 
 export interface Metadata {
 
-    description: string;
-
-    externalUrl: string;
-
     name: string;
 
-    url: string;
+    description: string;
+
+    stub: string;
+
+    featuredUrl: string;
+
+    logoUrl: string;
 
 }
 
