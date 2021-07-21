@@ -13,3 +13,12 @@ export function tcWrapper<F extends AnyFunction>(fn: F) {
 export function hexToAscii(hex: string) {
     return Buffer.from(hex.replace("0x",""),"hex").toString("utf8")
 }
+
+export function isJsonString(str: string) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
