@@ -185,6 +185,11 @@ export class NftHandler {
     await AccountHandler.ensureAccount(to.toString());
     await ClassHandler.ensureClass(class_id.toString());
     await NftHandler.ensureNft(classId, tokenId);
+
+    const nft = await Nft.get(nftId);
+    nft.ownerId = to.toString();
+
+    await nft.save();
   }
 
   static async handleEventNftmartBurnedToken (event : SubstrateEvent){
@@ -206,7 +211,6 @@ export class NftHandler {
 
     const nft = await Nft.get(nftId);
     nft.burned = true;
-    nft.save();
 
     await nft.save();
   }
