@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
+import { api, SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
 import { Call } from '../../types/models/Call'
 import { Order } from "../../types/models/Order"
 import { OrderItem } from "../../types/models/OrderItem"
@@ -13,7 +13,6 @@ import { hexToAscii } from '../../helpers/common'
 import { ClassHandler } from './class'
 import { NftHandler } from './nft'
 import { CategoryHandler } from './category'
-import { api, logger } from '@subql/types'
 
 var initialized: boolean = false;
 
@@ -85,7 +84,7 @@ export class OrderHandler {
     const categoryId = ord.categoryId.toString();
     const deposit = ord.deposit.toBigInt();
     const price = ord.price.toBigInt();
-    const deadline = ord.price.toBigInt();
+    const deadline = ord.deadline.toNumber();
     const itemsJson = ord.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
 
     await OrderHandler.ensureOrder(orderId);
