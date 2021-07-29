@@ -13,6 +13,7 @@ import { hexToAscii } from '../../helpers/common'
 import { ClassHandler } from './class'
 import { NftHandler } from './nft'
 import { CategoryHandler } from './category'
+import { api, logger } from '@subql/types'
 
 var initialized: boolean = false;
 
@@ -78,12 +79,14 @@ export class OrderHandler {
 
     await AccountHandler.ensureAccount(who.toString());
 
-    const currencyId = args[0].toString()
-    const categoryId = args[1].toString()
-    const deposit = (args[2] as any).toBigInt()
-    const price = (args[3] as any).toBigInt()
-    const deadline = (args[4] as any).toBigInt()
-    const itemsJson = (args[5].toJSON() as number[][])
+    let ord = (await api.query.nftmartOrder.orders(who.toString(), orderId) as any).unwrap();
+
+    const currencyId = ord.currencyId.toString();
+    const categoryId = ord.categoryId.toString();
+    const deposit = ord.deposit.toBigInt();
+    const price = ord.price.toBigInt();
+    const deadline = ord.price.toBigInt();
+    const itemsJson = ord.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
@@ -181,7 +184,7 @@ export class OrderHandler {
   }
 
   /* ================================== offer ==================================== */
-  
+
   static async handleEventNftmartCreatedOffer (event : SubstrateEvent){
     // console.log(`handle created order 1`)
 
