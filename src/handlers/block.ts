@@ -1,4 +1,4 @@
-import { SubstrateBlock } from '@subql/types'
+import { SubstrateBlock } from '@subquery/types'
 import { getBlockTimestamp } from '../helpers'
 import { Block } from '../types/models/Block'
 

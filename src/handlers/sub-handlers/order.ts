@@ -1,4 +1,4 @@
-import { api, SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
+import { SubstrateExtrinsic, SubstrateEvent, api } from '@subquery/types'
 import { Call } from '../../types/models/Call'
 import { Order } from "../../types/models/Order"
 import { OrderItem } from "../../types/models/OrderItem"
@@ -110,10 +110,10 @@ export class OrderHandler {
     const order = await Order.get(orderId)
 
     order.categoryId = categoryId
-    order.price = price
+    // order.price = price
     order.deadline = deadline
     order.deposit = deposit
-    order.debug = args.toString()
+    // order.debug = args.toString()
     order.sellerId = origin
     order.intentId = "Sell"
     order.eventCreatedId = eventId;

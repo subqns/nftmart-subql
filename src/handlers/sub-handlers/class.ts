@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
+import { SubstrateExtrinsic, SubstrateEvent } from '@subquery/types'
 import { Call } from '../../types/models/Call'
 import { Class } from "../../types/models/Class"
 import { BadData } from "../../types/models/BadData"

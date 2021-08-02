@@ -1,4 +1,4 @@
-import { Entity, SubstrateExtrinsic } from '@subql/types';
+import { Entity, SubstrateExtrinsic } from '@subquery/types';
 import { IEvent } from '@polkadot/types/types'
 import { u32 } from '@polkadot/types'
 import { DispatchError } from '@polkadot/types/interfaces'

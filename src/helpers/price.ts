@@ -1,5 +1,5 @@
 import { TOKEN_DECIMAL } from './token';
-import { api } from '@subql/types';
+import { api } from '@subquery/types';
 
 const feedByOracle = ['DOT', 'XBTC', 'RENBTC', 'POLKABTC']
 const readFromSwap = ['ACA']

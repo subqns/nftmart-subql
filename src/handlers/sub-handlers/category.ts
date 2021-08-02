@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic, SubstrateEvent } from '@subql/types'
+import { SubstrateExtrinsic, SubstrateEvent } from '@subquery/types'
 import { Call } from '../../types/models/Call'
 import { Category } from "../../types/models/Category"
 import { BadData } from "../../types/models/BadData"
@@ -7,7 +7,7 @@ import { ExtrinsicHandler } from '../extrinsic'
 import { DispatchedCallData } from '../types'
 import { AccountHandler } from './account'
 import { hexToAscii } from '../../helpers/common'
-import { api, logger } from '@subql/types'
+import { api, logger } from '@subquery/types'
 
 export class CategoryHandler {
 

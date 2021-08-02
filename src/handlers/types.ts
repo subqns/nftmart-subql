@@ -1,6 +1,6 @@
 
 import type { CallBase, AnyTuple } from '@polkadot/types/types'
-import type { SubstrateExtrinsic } from '@subql/types'
+import type { SubstrateExtrinsic } from '@subquery/types'
 import { Dispatcher } from '../helpers/dispatcher'
 
 export type AnyCall = CallBase<AnyTuple>

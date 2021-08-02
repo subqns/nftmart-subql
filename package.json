@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -b",
     "test": "jest",
-    "prepack": "rm -rf dist && npm build",
+    "prepack": "rm -rf dist && yarn build",
     "codegen": "subql codegen",
     "start": "subql-node -f . --local"
   },
@@ -19,9 +19,9 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/core": "^7.14.3",
-    "@subql/cli": "workspace:*",
-    "@subql/node": "workspace:*",
-    "@subql/types": "workspace:*",
+    "@subquery/cli": "workspace:*",
+    "@subquery/node": "workspace:*",
+    "@subquery/types": "workspace:*",
     "@types/babel__core": "^7",
     "@types/eslint": "^7",
     "eslint": "^7.27.0",

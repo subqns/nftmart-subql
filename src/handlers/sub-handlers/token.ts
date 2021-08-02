@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic } from '@subql/types'
+import { SubstrateExtrinsic } from '@subquery/types'
 import { Token } from '../../types/models/Token'
 import { Transfer } from "../../types/models/Transfer"
 import { AnyCall } from '../types'
