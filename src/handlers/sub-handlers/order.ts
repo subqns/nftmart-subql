@@ -110,10 +110,10 @@ export class OrderHandler {
     const order = await Order.get(orderId)
 
     order.categoryId = categoryId
-    // order.price = price
+    order.price = price
     order.deadline = deadline
     order.deposit = deposit
-    // order.debug = args.toString()
+    order.debug = args.toString()
     order.sellerId = origin
     order.intentId = "Sell"
     order.eventCreatedId = eventId;
