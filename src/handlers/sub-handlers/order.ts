@@ -70,15 +70,16 @@ export class OrderHandler {
     const extrinsicHandler = new ExtrinsicHandler(extrinsic);
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
-    console.log(`order::eventId`, eventId);
+    console.log(`order::eventId`, eventId, orderId);
 
     await AccountHandler.ensureAccount(who.toString());
 
-    let ord = (await api.query.nftmartOrder.orders(who.toString(), orderId) as any).unwrap();
+    let ord = (await api.query.nftmartOrder.orders.at(blockHash, who.toString(), orderId) as any).unwrap();
 
     const currencyId = ord.currencyId.toString();
     const categoryId = ord.categoryId.toString();
