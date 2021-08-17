@@ -37,6 +37,7 @@ export class AuctionHandler {
     const extrinsicHandler = new ExtrinsicHandler(extrinsic);
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
@@ -45,7 +46,7 @@ export class AuctionHandler {
 
     await AccountHandler.ensureAccount(owner);
 
-    let auc = (await api.query.nftmartAuctions.britishAuctions(owner, auctionId) as any).unwrap();
+    let auc = (await api.query.nftmartAuctions.britishAuctions.at(blockHash, owner, auctionId) as any).unwrap();
 
     const deposit = auc.deposit.toBigInt();
     const initPrice = auc.initPrice.toBigInt();
