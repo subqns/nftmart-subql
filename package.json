@@ -7,7 +7,7 @@
     "build": "tsc -b",
     "test": "jest",
     "prepack": "rm -rf dist && yarn build",
-    "codegen": "subql codegen",
+    "codegen": "subquery codegen",
     "start": "subql-node -f . --local"
   },
   "files": [

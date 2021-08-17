@@ -8,7 +8,8 @@ network:
 # endpoint: ws://81.70.132.13:9944
 # endpoint: ws://81.70.132.13:9966
 # endpoint: ws://tmp-chain.bcdata.top
-  endpoint: wss://staging-ws.nftmart.io
+# endpoint: wss://staging-ws.nftmart.io
+  endpoint: ws://127.0.0.1:9944
   types:
     Properties: u8
     NFTMetadata: Vec<u8>
@@ -44,6 +45,8 @@ network:
       name: Vec<u8>
       description: Vec<u8>
       createBlock: Compact<BlockNumberOf>
+      royaltyRate: Compact<PerU16>
+      categoryId: Compact<CategoryId>
     TokenInfoOf:
       metadata: NFTMetadata
       data: TokenData
@@ -51,9 +54,9 @@ network:
     TokenData:
       deposit: Compact<Balance>
       createBlock: Compact<BlockNumberOf>
-      royalty: bool
+      royalty_rate: Compact<PerU16>
       creator: AccountId
-      royalty_beneficiary: AccountId
+      royaltyBeneficiary: AccountId
     AccountToken:
       quantity: Compact<TokenId>
       reserved: Compact<TokenId>
@@ -69,14 +72,14 @@ network:
       deposit: Compact<Balance>
       price: Compact<Balance>
       deadline: Compact<BlockNumberOf>
-      categoryId: Compact<CategoryId>
       items: Vec<OrderItem>
+      commissionRate: Compact<PerU16>
     OfferOf:
       currencyId: Compact<CurrencyId>
       price: Compact<Balance>
       deadline: Compact<BlockNumberOf>
-      categoryId: Compact<CategoryId>
       items: Vec<OrderItem>
+      commissionRate: Compact<PerU16>
     BritishAuctionOf:
       currencyId: Compact<CurrencyId>
       hammerPrice: Compact<Balance>
@@ -85,15 +88,16 @@ network:
       initPrice: Compact<Balance>
       deadline: Compact<BlockNumberOf>
       allowDelay: bool
-      categoryId: Compact<CategoryId>
       items: Vec<OrderItem>
+      commissionRate: Compact<PerU16>
     BritishAuctionBidOf:
       lastBidPrice: Compact<Balance>
       lastBidAccount: Option<AccountId>
       lastBidBlock: Compact<BlockNumberOf>
+      commissionAgent: Option<AccountId>
+      commissionData: Option<Vec<u8>>
     DutchAuctionOf:
       currencyId: Compact<CurrencyId>
-      categoryId: Compact<CategoryId>
       deposit: Compact<Balance>
       minPrice: Compact<Balance>
       maxPrice: Compact<Balance>
@@ -102,6 +106,7 @@ network:
       items: Vec<OrderItem>
       allowBritishAuction: bool
       minRaise: Compact<PerU16>
+      commissionRate: Compact<PerU16>
     DutchAuctionBidOf: BritishAuctionBidOf
 dataSources:
   - name: main

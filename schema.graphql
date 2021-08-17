@@ -174,6 +174,48 @@ type OrderItem @entity {
   order: Order
 }
 
+type AuctionItem @entity {
+  id: ID!
+
+  nft: Nft!
+  quantity: Int!
+  auction: Auction
+}
+
+type Auction @entity {
+  id: ID!
+  creator: Account
+  type: String # one of British / Dutch
+  status: String # one of Created / Removed / Redeemed
+  currencyId: Int # per65535
+  minRaise: Int # per65535
+  deposit: BigInt
+  deadline: Int # block number
+  items: [AuctionItem] @derivedFrom(field: "auction")
+  bid: AuctionBid
+  commissionRate: Int
+
+  # british auction
+  hammerPrice: BigInt
+  initPrice: BigInt
+  allowDelay: Boolean
+
+  # dutch auction
+  minPrice: BigInt
+  maxPrice: BigInt
+  allowBritishAuction: Boolean
+}
+
+type AuctionBid @entity {
+  id: ID!
+  type: String # one of British / Dutch
+  price: BigInt
+  blockNumber: Int
+  commissionAgent: Account
+  commissionData: String
+  bidder: Account
+}
+
 type Order @entity {
   id: ID!
 

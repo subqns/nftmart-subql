@@ -9,11 +9,12 @@ import { CategoryHandler } from './sub-handlers/category'
 import { ClassHandler } from './sub-handlers/class'
 import { NftHandler } from './sub-handlers/nft'
 import { OrderHandler } from './sub-handlers/order'
+import { AuctionHandler } from './sub-handlers/auction'
 
 type EventDispatch = Dispatcher<SubstrateEvent>
 
 export class EventHandler {
-  private event: SubstrateEvent 
+  private event: SubstrateEvent
   private dispatcher: EventDispatch
 
   constructor(event: SubstrateEvent) {
@@ -96,6 +97,11 @@ export class EventHandler {
       {
         key: 'nftmartOrder-RemovedOffer',
         handler: OrderHandler.handleEventNftmartRemovedOffer
+      },
+      /* auctions */
+      {
+        key: 'nftmartAuction-CreatedBritishAuction',
+        handler: AuctionHandler.handleEventNftmartCreatedBritishAuction
       },
     ])
   }

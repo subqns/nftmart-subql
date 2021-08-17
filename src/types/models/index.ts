@@ -26,6 +26,12 @@ export {NftTransfer} from "./NftTransfer"
 
 export {OrderItem} from "./OrderItem"
 
+export {AuctionItem} from "./AuctionItem"
+
+export {Auction} from "./Auction"
+
+export {AuctionBid} from "./AuctionBid"
+
 export {Order} from "./Order"
 
 export {OrderStatus} from "./OrderStatus"
