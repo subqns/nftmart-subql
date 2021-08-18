@@ -46,7 +46,7 @@ export class AuctionHandler {
 
     await AccountHandler.ensureAccount(owner);
 
-    let auc = (await api.query.nftmartAuctions.britishAuctions.at(blockHash, owner, auctionId) as any).unwrap();
+    let auc = (await api.query.nftmartAuction.britishAuctions.at(blockHash, owner, auctionId) as any).unwrap();
 
     const deposit = auc.deposit.toBigInt();
     const initPrice = auc.initPrice.toBigInt();
@@ -87,6 +87,9 @@ export class AuctionHandler {
     const auction = await Auction.get(auctionId)
 
     auction.type = 'British'
+    auction.currencyId = 0
+    auction.status = 'Created'
+    auction.creatorId = owner
     auction.deposit = deposit
     auction.initPrice = initPrice
     auction.hammerPrice = hammerPrice

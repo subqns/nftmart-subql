@@ -12,6 +12,8 @@ export class Auction implements Entity {
 
     public id: string;
 
+    public creatorId?: string;
+
     public type?: string;
 
     public status?: string;
