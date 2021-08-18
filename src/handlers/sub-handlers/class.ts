@@ -47,7 +47,7 @@ export class ClassHandler {
     const categoryId = cls.data.categoryId.toString()
     const createBlock = cls.data.createBlock.toNumber()
     const id = class_id.toString()
-    const metadataStr = hexToAscii(cls.data.metadata.toString());
+    const metadataStr = hexToAscii(cls.metadata.toString());
     console.log(metadataStr);
     const metadata = await (async function(){
       try {
