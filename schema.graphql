@@ -141,6 +141,7 @@ type Class @entity {
   metadata: Metadata
   name: String
   description: String
+  blockNumber: Int
 
   transferable: Boolean
   burnable: Boolean

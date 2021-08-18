@@ -26,6 +26,8 @@ export class Class implements Entity {
 
     public description?: string;
 
+    public blockNumber?: number;
+
     public transferable?: boolean;
 
     public burnable?: boolean;
