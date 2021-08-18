@@ -30,7 +30,9 @@ export class Class implements Entity {
 
     public burnable?: boolean;
 
-    public royaltiesChargeable?: boolean;
+    public royaltyRate?: number;
+
+    public categoryId?: string;
 
     public debug?: string;
 

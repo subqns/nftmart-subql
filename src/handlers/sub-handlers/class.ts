@@ -1,4 +1,4 @@
-import { SubstrateExtrinsic, SubstrateEvent } from '@subquery/types'
+import { SubstrateExtrinsic, SubstrateEvent, api } from '@subquery/types'
 import { Call } from '../../types/models/Call'
 import { Class } from "../../types/models/Class"
 import { BadData } from "../../types/models/BadData"
@@ -28,6 +28,7 @@ export class ClassHandler {
     const ownerId = owner.toString()
     const args = event.extrinsic?.extrinsic?.method.args
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
 
     await AccountHandler.ensureAccount(origin)
     await AccountHandler.ensureAccount(ownerId)
@@ -35,14 +36,17 @@ export class ClassHandler {
     // console.log(`origin:`, origin)
     // console.log(`owner:`, ownerId)
 
-    const name = hexToAscii(args[1].toString())
-    const description = hexToAscii(args[2].toString())
-    const properties = Number(args[3].toString())
+    let cls = (await api.query.ormlNft.classes.at(blockHash, class_id) as any).unwrap();
+
+    const name = hexToAscii(cls.data.name.toString())
+    const description = hexToAscii(cls.data.description.toString())
+    const properties = cls.data.properties.toNumber()
     const transferable = properties | 0b00000001
     const burnable = (properties | 0b00000010) >> 1
-    const royaltiesChargeable = (properties | 0b00000100) >> 2
+    const royaltyRate = cls.data.royaltyRate.toNumber()
+    const categoryId = cls.data.categoryId.toString()
     const id = class_id.toString()
-    const metadataStr = hexToAscii(args[0].toString());
+    const metadataStr = hexToAscii(cls.data.metadata.toString());
     console.log(metadataStr);
     const metadata = await (async function(){
       try {
@@ -66,9 +70,10 @@ export class ClassHandler {
     clas.description = description
     clas.transferable = !!transferable
     clas.burnable = !!burnable
-    clas.royaltiesChargeable = !!royaltiesChargeable
+    clas.royaltyRate = royaltyRate
+    clas.categoryId = categoryId
 
-    clas.debug = args.toString()
+    clas.debug = cls.toString()
 
     await clas.save()
   }

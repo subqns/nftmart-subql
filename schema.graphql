@@ -144,8 +144,9 @@ type Class @entity {
 
   transferable: Boolean
   burnable: Boolean
-  royaltiesChargeable: Boolean
 
+  royaltyRate: Int
+  category: Category
   nfts: [Nft] @derivedFrom(field: "class")
   debug: String
 }
