@@ -9,7 +9,8 @@ network:
 # endpoint: ws://81.70.132.13:9966
 # endpoint: ws://tmp-chain.bcdata.top
 # endpoint: wss://staging-ws.nftmart.io
-  endpoint: ws://127.0.0.1:9944
+# endpoint: ws://127.0.0.1:9944
+  endpoint: ws://43.129.72.231:9999
   types:
     Properties: u8
     NFTMetadata: Vec<u8>
@@ -21,7 +22,7 @@ network:
     CurrencyIdOf: CurrencyId
     Amount: i128
     AmountOf: Amount
-    CategoryId: u32
+    CategoryId: GlobalId
     CategoryIdOf: CategoryId
     ClassId: u32
     ClassIdOf: ClassId
@@ -46,7 +47,7 @@ network:
       description: Vec<u8>
       createBlock: Compact<BlockNumberOf>
       royaltyRate: Compact<PerU16>
-      categoryId: Compact<CategoryId>
+      categoryIds: Vec<CategoryId>
     TokenInfoOf:
       metadata: NFTMetadata
       data: TokenData
