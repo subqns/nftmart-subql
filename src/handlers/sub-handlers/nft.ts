@@ -106,6 +106,8 @@ export class NftHandler {
     let quant = Number(quantity.toString());
     let id = `${classId}-${tokenId}`;
 
+    console.log('MintedToken:', id);
+
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     // const Args = event.extrinsic?.extrinsic?.args;
     // console.log(Args.toString())

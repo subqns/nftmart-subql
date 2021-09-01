@@ -44,7 +44,7 @@ export class ClassHandler {
     const transferable = properties | 0b00000001
     const burnable = (properties | 0b00000010) >> 1
     const royaltyRate = cls.data.royaltyRate.toNumber()
-    const categoryId = cls.data.categoryId.toString()
+    const categoryId = cls.data.categoryIds[0].toString()
     const createBlock = cls.data.createBlock.toNumber()
     const id = class_id.toString()
     const metadataStr = hexToAscii(cls.metadata.toString());

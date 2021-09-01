@@ -103,6 +103,10 @@ export class EventHandler {
         key: 'nftmartAuction-CreatedBritishAuction',
         handler: AuctionHandler.handleEventNftmartCreatedBritishAuction
       },
+      {
+        key: 'nftmartAuction-CreatedDutchAuction',
+        handler: AuctionHandler.handleEventNftmartCreatedDutchAuction
+      },
     ])
   }
 
