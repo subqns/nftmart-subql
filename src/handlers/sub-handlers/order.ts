@@ -134,6 +134,7 @@ export class OrderHandler {
     const extrinsicHandler = new ExtrinsicHandler(extrinsic);
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
@@ -195,6 +196,7 @@ export class OrderHandler {
     const extrinsicHandler = new ExtrinsicHandler(extrinsic);
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
@@ -203,11 +205,19 @@ export class OrderHandler {
 
     await AccountHandler.ensureAccount(who.toString());
 
+    /*
     const currencyId = args[0].toString()
-    const categoryId = args[1].toString()
-    const price = (args[2] as any).toBigInt()
-    const deadline = (args[3] as any).toBigInt()
-    const itemsJson = (args[4].toJSON() as number[][])
+    const price = (args[1] as any).toBigInt()
+    const deadline = (args[2] as any).toBigInt()
+    const itemsJson = (args[3].toJSON() as number[][])
+    */
+
+    let ofr = (await api.query.nftmartOrder.offers.at(blockHash, who.toString(), orderId) as any).unwrap();
+
+    const currencyId = ofr.currencyId.toString();
+    const price = ofr.price.toBigInt();
+    const deadline = ofr.deadline.toNumber();
+    const itemsJson = ofr.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
@@ -227,11 +237,11 @@ export class OrderHandler {
     }
 
     await AccountHandler.ensureAccount(origin)
-    await CategoryHandler.ensureCategory(categoryId)
+    // await CategoryHandler.ensureCategory(categoryId)
 
     const order = await Order.get(orderId)
 
-    order.categoryId = categoryId
+    // order.categoryId = categoryId
     order.price = price
     order.deadline = deadline
     order.debug = args.toString()
