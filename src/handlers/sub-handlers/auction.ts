@@ -102,6 +102,59 @@ export class AuctionHandler {
   }
 
 
+  static async handleEventNftmartRemovedBritishAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::removed::british::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    const auction = await Auction.get(auctionId)
+
+    auction.status = 'Removed'
+
+    await auction.save()
+  }
+
+  static async handleEventNftmartRedeemedBritishAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::redeemed::british::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    const auction = await Auction.get(auctionId)
+
+    auction.status = 'Redeemed'
+
+    await auction.save()
+  }
+
+
   static async handleEventNftmartCreatedDutchAuction (event : SubstrateEvent){
 
     const {event: { data: [who, auction_id] }} = event;
@@ -172,6 +225,58 @@ export class AuctionHandler {
     auction.allowBritishAuction = allowBritishAuction
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
+
+    await auction.save()
+  }
+
+  static async handleEventNftmartRemovedDutchAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::removed::dutch::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    const auction = await Auction.get(auctionId)
+
+    auction.status = 'Removed'
+
+    await auction.save()
+  }
+
+  static async handleEventNftmartRedeemedDutchAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::redeemed::dutch::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    const auction = await Auction.get(auctionId)
+
+    auction.status = 'Redeemed'
 
     await auction.save()
   }
