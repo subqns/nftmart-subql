@@ -127,7 +127,7 @@ type Category @entity {
   creator: Account
   name: String
 
-  orders: [Order] @derivedFrom(field: "category")
+  classes: [Class] @derivedFrom(field: "categories")
 
   debug: String
 }
@@ -147,7 +147,7 @@ type Class @entity {
   burnable: Boolean
 
   royaltyRate: Int
-  category: Category
+  categories: [Category]
   nfts: [Nft] @derivedFrom(field: "class")
   debug: String
 }
@@ -229,11 +229,10 @@ type Order @entity {
 
   price: BigInt
   deposit: BigInt
+  commissionRate: Int
 
   seller: Account #create relation to Account
   buyer: Account #create relation to Account
-
-  category: Category #create relation to category
 
   items: [OrderItem] @derivedFrom(field: "order")
 

@@ -24,11 +24,11 @@ export class Order implements Entity {
 
     public deposit?: bigint;
 
+    public commissionRate?: number;
+
     public sellerId?: string;
 
     public buyerId?: string;
-
-    public categoryId?: string;
 
     public eventCreatedId?: string;
 
