@@ -20,6 +20,8 @@ export {Transfer} from "./Transfer"
 
 export {Category} from "./Category"
 
+export {CategoryClass} from "./CategoryClass"
+
 export {Class} from "./Class"
 
 export {NftTransfer} from "./NftTransfer"

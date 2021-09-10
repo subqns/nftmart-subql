@@ -1,6 +1,8 @@
 import { SubstrateExtrinsic, SubstrateEvent, api } from '@subquery/types'
 import { Call } from '../../types/models/Call'
 import { Class } from "../../types/models/Class"
+import { CategoryClassHandler } from "./categoryClass"
+import { CategoryHandler } from "./category"
 import { BadData } from "../../types/models/BadData"
 import { CallHandler } from '../call'
 import { ExtrinsicHandler } from '../extrinsic'
@@ -46,7 +48,7 @@ export class ClassHandler {
     const royaltyRate = cls.data.royaltyRate.toNumber()
     const categoryIds = cls.data.categoryIds.map(x=>x.toString())
     const createBlock = cls.data.createBlock.toNumber()
-    const id = class_id.toString()
+    const classId = class_id.toString()
     const metadataStr = hexToAscii(cls.metadata.toString());
     console.log(metadataStr);
     const metadata = await (async function(){
@@ -54,7 +56,7 @@ export class ClassHandler {
         return JSON.parse(metadataStr);
       } catch(e) {
         // console.log(`Error parsing ${blockHeight}-event-${id}`);
-        const badData = new BadData(`${blockHeight}-event-${id}`);
+        const badData = new BadData(`${blockHeight}-event-${classId}`);
         badData.data = metadataStr;
         badData.reason = `${e}`;
         await badData.save();
@@ -62,7 +64,7 @@ export class ClassHandler {
       return {}
     })();
 
-    const clas = new Class(id)
+    const clas = new Class(classId)
 
     clas.ownerId = ownerId
     clas.creatorId = origin
@@ -72,12 +74,18 @@ export class ClassHandler {
     clas.transferable = !!transferable
     clas.burnable = !!burnable
     clas.royaltyRate = royaltyRate
-    clas.categoriesId = categoryIds
+    // clas.categoriesId = categoryIds
     clas.blockNumber = createBlock
 
     clas.debug = cls.toString()
 
     await clas.save()
+
+    for (let catId of categoryIds) {
+	    await CategoryHandler.ensureCategory(catId)
+	    await CategoryClassHandler.ensureCategoryClass(catId, classId)
+    }
+
   }
 
   static async handleEventNftmartDestroyedClass (event : SubstrateEvent){

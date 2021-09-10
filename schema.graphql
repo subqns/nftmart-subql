@@ -127,9 +127,17 @@ type Category @entity {
   creator: Account
   name: String
 
-  classes: [Class] @derivedFrom(field: "categories")
+  classes: [CategoryClass] @derivedFrom(field: "category")
 
   debug: String
+}
+
+type CategoryClass @entity {
+  id: ID!
+
+  category: Category!
+
+  class: Class!
 }
 
 # TODO: rename to collection ?
@@ -147,7 +155,7 @@ type Class @entity {
   burnable: Boolean
 
   royaltyRate: Int
-  categories: [Category]
+  categories: [CategoryClass] @derivedFrom(field: "class")
   nfts: [Nft] @derivedFrom(field: "class")
   debug: String
 }

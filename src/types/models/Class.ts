@@ -34,8 +34,6 @@ export class Class implements Entity {
 
     public royaltyRate?: number;
 
-    public categoriesId?: string[];
-
     public debug?: string;
 
 
