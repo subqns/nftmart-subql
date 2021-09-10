@@ -87,6 +87,7 @@ export class OrderHandler {
     const price = ord.price.toBigInt();
     const deadline = ord.deadline.toNumber();
     const itemsJson = ord.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
+    const commissionRate = ord.commissionRate.toNumber();
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
@@ -113,6 +114,7 @@ export class OrderHandler {
     // order.categoryId = categoryId
     order.price = price
     order.deadline = deadline
+    order.commissionRate = commissionRate
     order.deposit = deposit
     order.debug = args.toString()
     order.sellerId = origin
@@ -218,6 +220,7 @@ export class OrderHandler {
     const price = ofr.price.toBigInt();
     const deadline = ofr.deadline.toNumber();
     const itemsJson = ofr.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
+    const commissionRate = ofr.commissionRate.toNumber();
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
@@ -244,6 +247,7 @@ export class OrderHandler {
     // order.categoryId = categoryId
     order.price = price
     order.deadline = deadline
+    order.commissionRate = commissionRate;
     order.debug = args.toString()
     order.buyerId = origin
     order.eventCreatedId = eventId;
