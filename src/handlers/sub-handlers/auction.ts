@@ -97,6 +97,7 @@ export class AuctionHandler {
     auction.allowDelay = allowDelay
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
+    auction.bidId = auctionId
 
     await auction.save()
   }
@@ -154,6 +155,71 @@ export class AuctionHandler {
     await auction.save()
   }
 
+  static async handleEventNftmartHammerBritishAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::hammered::british::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    const auction = await Auction.get(auctionId)
+
+    auction.status = 'Redeemed'
+
+    await auction.save()
+  }
+
+  static async handleEventNftmartBidBritishAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::bid::british::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    let bd = (await api.query.nftmartAuction.britishAuctionBids.at(blockHash, auctionId) as any).unwrap();
+
+    let price = bd.lastBidPrice.toBigInt();
+    let bidderId = bd.lastBidAccount.toString();
+    let blockNumber = bd.lastBidBlock.toNumber();
+
+    const bid = new AuctionBid(`${auctionId}`)
+    bid.bidderId = bidderId;
+    bid.type = 'British'
+    bid.price = price
+    bid.blockNumber = blockNumber //blockHeight
+    if (bd.commissionAgent.isSome) {
+	    bid.commissionAgentId = bd.commissionAgent.toString()
+    }
+    if (bd.commissionData.isSome) {
+	    bid.commissionData = bd.commissionData.toString()
+    }
+    await bid.save()
+
+  }
 
   static async handleEventNftmartCreatedDutchAuction (event : SubstrateEvent){
 
@@ -225,6 +291,7 @@ export class AuctionHandler {
     auction.allowBritishAuction = allowBritishAuction
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
+    auction.bidId = auctionId
 
     await auction.save()
   }
@@ -281,4 +348,57 @@ export class AuctionHandler {
     await auction.save()
   }
 
+  static async handleEventNftmartBidDutchAuction (event : SubstrateEvent){
+
+    const {event: { data: [who, auction_id] }} = event;
+    let owner = who.toString();
+    let auctionId = auction_id.toString();
+
+    const extrinsic = event.extrinsic;
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    const args = event.extrinsic?.extrinsic?.method.args;
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toNumber();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    console.log(`auction::bid::dutch::eventId`, eventId);
+
+    await AccountHandler.ensureAccount(owner);
+
+    let bd = (await api.query.nftmartAuction.dutchAuctionBids.at(blockHash, auctionId) as any).unwrap();
+
+    let price = bd.lastBidPrice.toBigInt();
+    let bidderId = bd.lastBidAccount.toString();
+    let blockNumber = bd.lastBidBlock.toNumber();
+
+    const bid = new AuctionBid(`${auctionId}`)
+    bid.bidderId = bidderId;
+    bid.type = 'Dutch'
+    bid.price = price
+    bid.blockNumber = blockNumber //blockHeight
+    if (bd.commissionAgent.isSome) {
+	    bid.commissionAgentId = bd.commissionAgent.toString()
+    }
+    if (bd.commissionData.isSome) {
+	    bid.commissionData = bd.commissionData.toString()
+    }
+    await bid.save()
+
+  }
+
 }
+
+/*
+type AuctionBid @entity {
+  id: ID!
+  type: String # one of British / Dutch
+  price: BigInt
+  blockNumber: Int
+  commissionAgent: Account
+  commissionData: String
+  bidder: Account
+}
+*/
+

@@ -112,6 +112,14 @@ export class EventHandler {
         handler: AuctionHandler.handleEventNftmartRedeemedBritishAuction
       },
       {
+        key: 'nftmartAuction-BidBritishAuction',
+        handler: AuctionHandler.handleEventNftmartBidBritishAuction
+      },
+      {
+        key: 'nftmartAuction-HammerBritishAuction',
+        handler: AuctionHandler.handleEventNftmartHammerBritishAuction
+      },
+      {
         key: 'nftmartAuction-CreatedDutchAuction',
         handler: AuctionHandler.handleEventNftmartCreatedDutchAuction
       },
@@ -122,6 +130,10 @@ export class EventHandler {
       {
         key: 'nftmartAuction-RedeemedDutchAuction',
         handler: AuctionHandler.handleEventNftmartRedeemedDutchAuction
+      },
+      {
+        key: 'nftmartAuction-BidDutchAuction',
+        handler: AuctionHandler.handleEventNftmartBidDutchAuction
       },
     ])
   }
