@@ -393,7 +393,7 @@ export class AuctionHandler {
     await AccountHandler.ensureAccount(owner);
     await AuctionHandler.ensureAuction(auctionId);
 
-    let bd = (await api.query.nftmartAuction.britishAuctionBids.at(blockHash, auctionId) as any).unwrap();
+    let bd = (await api.query.nftmartAuction.dutchAuctionBids.at(blockHash, auctionId) as any).unwrap();
 
     let ac = await Auction.get(auctionId)
 
