@@ -78,6 +78,7 @@ export class AuctionHandler {
 
     const bidCount = 0;
     const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.nth = bidCount;
     bid.auctionId = auctionId;
     bid.bidderId = owner;
     bid.type = 'British'
@@ -104,7 +105,7 @@ export class AuctionHandler {
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
     auction.bidCount = bidCount
-    auction.bidId = `${auctionId}-${bidCount}`
+    // auction.bidId = `${auctionId}-${bidCount}`
 
     await auction.save()
   }
@@ -220,6 +221,7 @@ export class AuctionHandler {
     let blockNumber = bd.lastBidBlock.toNumber();
 
     const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.nth = bidCount;
     bid.auctionId = auctionId;
     bid.bidderId = bidderId;
     bid.type = 'British'
@@ -287,6 +289,7 @@ export class AuctionHandler {
 
     const bidCount = 0;
     const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.nth = bidCount;
     bid.auctionId = auctionId;
     bid.bidderId = owner;
     bid.type = 'Dutch'
@@ -313,7 +316,7 @@ export class AuctionHandler {
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
     auction.bidCount = bidCount
-    auction.bidId = `${auctionId}-${bidCount}`
+    // auction.bidId = `${auctionId}-${bidCount}`
 
     await auction.save()
   }
@@ -401,6 +404,7 @@ export class AuctionHandler {
     let blockNumber = bd.lastBidBlock.toNumber();
 
     const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.nth = bidCount;
     bid.auctionId = auctionId;
     bid.bidderId = bidderId;
     bid.type = 'Dutch'

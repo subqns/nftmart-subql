@@ -26,8 +26,6 @@ export class Auction implements Entity {
 
     public deadline?: number;
 
-    public bidId?: string;
-
     public bidCount?: number;
 
     public commissionRate?: number;

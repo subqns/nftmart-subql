@@ -202,7 +202,7 @@ type Auction @entity {
   deposit: BigInt
   deadline: Int # block number
   items: [AuctionItem] @derivedFrom(field: "auction")
-  bid: AuctionBid
+  bids: [AuctionBid] @derivedFrom(field: "auction")
   bidCount: Int
   commissionRate: Int
   blockCreated: Int # block number
@@ -224,6 +224,7 @@ type Auction @entity {
 
 type AuctionBid @entity {
   id: ID!
+  nth: Int
   auction: Auction
   type: String # one of British / Dutch
   price: BigInt
