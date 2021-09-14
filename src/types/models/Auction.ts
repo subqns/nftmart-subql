@@ -28,7 +28,17 @@ export class Auction implements Entity {
 
     public bidId?: string;
 
+    public bidCount?: number;
+
     public commissionRate?: number;
+
+    public blockCreated?: number;
+
+    public eventCreatedId?: string;
+
+    public eventCancelledId?: string;
+
+    public eventCompletedId?: string;
 
     public hammerPrice?: bigint;
 

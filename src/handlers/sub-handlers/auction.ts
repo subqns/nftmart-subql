@@ -22,6 +22,8 @@ export class AuctionHandler {
     if (!auction) {
       const auction = new Auction(id)
 
+      auction.bidCount = 0;
+
       await auction.save()
     }
 
@@ -71,10 +73,12 @@ export class AuctionHandler {
       auctionItem.quantity = quantity
       auctionItem.auctionId = auctionId
       await auctionItem.save()
-      console.log(`created new order item`, classId, tokenId, quantity)
+      console.log(`created new auction item`, classId, tokenId, quantity)
     }
 
-    const bid = new AuctionBid(`${auctionId}`)
+    const bidCount = 0;
+    const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.auctionId = auctionId;
     bid.bidderId = owner;
     bid.type = 'British'
     bid.price = initPrice
@@ -87,6 +91,8 @@ export class AuctionHandler {
     const auction = await Auction.get(auctionId)
 
     auction.type = 'British'
+    auction.blockCreated = blockHeight;
+    auction.eventCreatedId = eventId;
     auction.currencyId = 0
     auction.status = 'Created'
     auction.creatorId = owner
@@ -97,7 +103,8 @@ export class AuctionHandler {
     auction.allowDelay = allowDelay
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
-    auction.bidId = auctionId
+    auction.bidCount = bidCount
+    auction.bidId = `${auctionId}-${bidCount}`
 
     await auction.save()
   }
@@ -155,6 +162,7 @@ export class AuctionHandler {
     await auction.save()
   }
 
+  // TODO: generate bid entry
   static async handleEventNftmartHammerBritishAuction (event : SubstrateEvent){
 
     const {event: { data: [who, auction_id] }} = event;
@@ -199,14 +207,20 @@ export class AuctionHandler {
     console.log(`auction::bid::british::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     let bd = (await api.query.nftmartAuction.britishAuctionBids.at(blockHash, auctionId) as any).unwrap();
+
+    let ac = await Auction.get(auctionId)
+
+    let bidCount = ac.bidCount + 1
 
     let price = bd.lastBidPrice.toBigInt();
     let bidderId = bd.lastBidAccount.toString();
     let blockNumber = bd.lastBidBlock.toNumber();
 
-    const bid = new AuctionBid(`${auctionId}`)
+    const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.auctionId = auctionId;
     bid.bidderId = bidderId;
     bid.type = 'British'
     bid.price = price
@@ -218,6 +232,9 @@ export class AuctionHandler {
 	    bid.commissionData = bd.commissionData.toString()
     }
     await bid.save()
+
+    ac.bidCount = bidCount;
+    await ac.save()
 
   }
 
@@ -265,13 +282,15 @@ export class AuctionHandler {
       auctionItem.quantity = quantity
       auctionItem.auctionId = auctionId
       await auctionItem.save()
-      console.log(`created new order item`, classId, tokenId, quantity)
+      console.log(`created new auction item`, classId, tokenId, quantity)
     }
 
-    const bid = new AuctionBid(`${auctionId}`)
+    const bidCount = 0;
+    const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.auctionId = auctionId;
     bid.bidderId = owner;
     bid.type = 'Dutch'
-    bid.price = minPrice
+    bid.price = maxPrice
     bid.blockNumber = blockHeight
     await bid.save()
 
@@ -281,6 +300,8 @@ export class AuctionHandler {
     const auction = await Auction.get(auctionId)
 
     auction.type = 'Dutch'
+    auction.blockCreated = blockHeight;
+    auction.eventCreatedId = eventId;
     auction.currencyId = 0
     auction.status = 'Created'
     auction.creatorId = owner
@@ -291,7 +312,8 @@ export class AuctionHandler {
     auction.allowBritishAuction = allowBritishAuction
     auction.commissionRate = commissionRate
     auction.minRaise = minRaise
-    auction.bidId = auctionId
+    auction.bidCount = bidCount
+    auction.bidId = `${auctionId}-${bidCount}`
 
     await auction.save()
   }
@@ -366,14 +388,20 @@ export class AuctionHandler {
     console.log(`auction::bid::dutch::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
-    let bd = (await api.query.nftmartAuction.dutchAuctionBids.at(blockHash, auctionId) as any).unwrap();
+    let bd = (await api.query.nftmartAuction.britishAuctionBids.at(blockHash, auctionId) as any).unwrap();
+
+    let ac = await Auction.get(auctionId)
+
+    let bidCount = ac.bidCount + 1
 
     let price = bd.lastBidPrice.toBigInt();
     let bidderId = bd.lastBidAccount.toString();
     let blockNumber = bd.lastBidBlock.toNumber();
 
-    const bid = new AuctionBid(`${auctionId}`)
+    const bid = new AuctionBid(`${auctionId}-${bidCount}`)
+    bid.auctionId = auctionId;
     bid.bidderId = bidderId;
     bid.type = 'Dutch'
     bid.price = price
@@ -385,6 +413,9 @@ export class AuctionHandler {
 	    bid.commissionData = bd.commissionData.toString()
     }
     await bid.save()
+
+    ac.bidCount = bidCount;
+    await ac.save()
 
   }
 

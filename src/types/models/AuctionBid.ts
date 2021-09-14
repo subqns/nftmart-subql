@@ -12,6 +12,8 @@ export class AuctionBid implements Entity {
 
     public id: string;
 
+    public auctionId?: string;
+
     public type?: string;
 
     public price?: bigint;

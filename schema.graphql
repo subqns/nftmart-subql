@@ -203,7 +203,13 @@ type Auction @entity {
   deadline: Int # block number
   items: [AuctionItem] @derivedFrom(field: "auction")
   bid: AuctionBid
+  bidCount: Int
   commissionRate: Int
+  blockCreated: Int # block number
+
+  eventCreated: Event #create relation to event
+  eventCancelled: Event #create relation to event
+  eventCompleted: Event #create relation to event
 
   # british auction
   hammerPrice: BigInt
@@ -218,6 +224,7 @@ type Auction @entity {
 
 type AuctionBid @entity {
   id: ID!
+  auction: Auction
   type: String # one of British / Dutch
   price: BigInt
   blockNumber: Int
