@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.19",
-    "@polkadot/api": "^4.16.2",
-    "@polkadot/types": "^4.16.2",
+    "@polkadot/api": "^5.9.1",
+    "@polkadot/types": "^5.9.1",
     "g": "^2.0.1",
     "graphql": "^15.5.0",
     "path": "^0.12.7",
