@@ -32,7 +32,7 @@ export class Nft implements Entity {
 
     public ownerId?: string;
 
-    public royalty?: boolean;
+    public royaltyRate?: number;
 
     public royaltyBeneficiaryId?: string;
 

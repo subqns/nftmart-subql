@@ -140,13 +140,12 @@ export class NftHandler {
     }
     */
     if (!tokendata.isEmpty){
-      let tokenjson = tokendata.toJSON() as any
-      nft.debug = JSON.stringify(tokendata.toString());
-      let chargeRoyalty = tokenjson.data.royalty;
-      let quantity = tokenjson.quantity;
-      nft.royalty = chargeRoyalty;
+      let token = (tokendata as any).unwrap()
+      nft.debug = JSON.stringify(token.toHuman());
+      let quantity = token.quantity.toNumber();
+      nft.royaltyRate = token.data.royalty_rate.toNumber();
       // nft.metadata = metadataStr;
-      let metadataStr = hexToAscii(tokenjson.metadata);
+      let metadataStr = token.metadata.toHuman();
       console.log('metadataStr', metadataStr);
       nft.metadata = await (async function(){
         try {
