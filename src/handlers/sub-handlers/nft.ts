@@ -145,7 +145,7 @@ export class NftHandler {
       let quantity = token.quantity.toNumber();
       nft.royaltyRate = token.data.royalty_rate.toNumber();
       // nft.metadata = metadataStr;
-      let metadataStr = token.metadata.toHuman();
+      let metadataStr = hexToAscii(token.metadata.toString());
       console.log('metadataStr', metadataStr);
       nft.metadata = await (async function(){
         try {
