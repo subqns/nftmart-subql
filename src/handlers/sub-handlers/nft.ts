@@ -144,6 +144,7 @@ export class NftHandler {
       nft.debug = JSON.stringify(token.toHuman());
       let quantity = token.quantity.toNumber();
       nft.royaltyRate = token.data.royalty_rate.toNumber();
+      nft.deposit = token.data.deposit.toBigInt();
       // nft.metadata = metadataStr;
       let metadataStr = hexToAscii(token.metadata.toString());
       console.log('metadataStr', metadataStr);
