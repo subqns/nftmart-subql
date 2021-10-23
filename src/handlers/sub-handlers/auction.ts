@@ -145,6 +145,7 @@ export class AuctionHandler {
     console.log(`auction::removed::british::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     const auction = await Auction.get(auctionId);
 
@@ -187,6 +188,7 @@ export class AuctionHandler {
     console.log(`auction::redeemed::british::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     const auction = await Auction.get(auctionId);
 
@@ -230,6 +232,7 @@ export class AuctionHandler {
     console.log(`auction::hammered::british::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     const auction = await Auction.get(auctionId);
 
@@ -337,6 +340,7 @@ export class AuctionHandler {
     console.log(`auction::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     let auc = ((await api.query.nftmartAuction.dutchAuctions.at(blockHash, owner, auctionId)) as any).unwrap();
 
@@ -434,6 +438,7 @@ export class AuctionHandler {
     console.log(`auction::removed::dutch::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     const auction = await Auction.get(auctionId);
 
@@ -476,6 +481,7 @@ export class AuctionHandler {
     console.log(`auction::redeemed::dutch::eventId`, eventId);
 
     await AccountHandler.ensureAccount(owner);
+    await AuctionHandler.ensureAuction(auctionId);
 
     const auction = await Auction.get(auctionId);
 
