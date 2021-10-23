@@ -1,69 +1,71 @@
-import { SubstrateExtrinsic, SubstrateEvent, api } from '@subquery/types'
-import { Call } from '../../types/models/Call'
-import { Order } from "../../types/models/Order"
-import { OrderItem } from "../../types/models/OrderItem"
-import { OrderStatus } from "../../types/models/OrderStatus"
-import { OrderDirection } from "../../types/models/OrderDirection"
-import { CallHandler } from '../call'
-import { ExtrinsicHandler } from '../extrinsic'
-import { EventHandler } from '../event'
-import { DispatchedCallData } from '../types'
-import { AccountHandler } from './account'
-import { hexToAscii } from '../../helpers/common'
-import { ClassHandler } from './class'
-import { NftHandler } from './nft'
-import { CategoryHandler } from './category'
+import {SubstrateExtrinsic, SubstrateEvent, api} from '@subquery/types';
+import {Call} from '../../types/models/Call';
+import {Order} from '../../types/models/Order';
+import {OrderItem} from '../../types/models/OrderItem';
+import {OrderStatus} from '../../types/models/OrderStatus';
+import {OrderDirection} from '../../types/models/OrderDirection';
+import {CallHandler} from '../call';
+import {ExtrinsicHandler} from '../extrinsic';
+import {EventHandler} from '../event';
+import {DispatchedCallData} from '../types';
+import {AccountHandler} from './account';
+import {hexToAscii} from '../../helpers/common';
+import {ClassHandler} from './class';
+import {NftHandler} from './nft';
+import {NftEvent} from '../../types/models/NftEvent';
+import {CategoryHandler} from './category';
 
 var initialized: boolean = false;
 
 export class OrderHandler {
-
-  static async ensureOrder (id: string) {
-
-    const order = await Order.get(id)
+  static async ensureOrder(id: string) {
+    const order = await Order.get(id);
 
     if (!order) {
-      const order = new Order(id)
+      const order = new Order(id);
 
-      await order.save()
+      await order.save();
     }
 
     if (!initialized) {
-      OrderHandler.ensureOrderStatus('Created')
-      OrderHandler.ensureOrderStatus('Cancelled')
-      OrderHandler.ensureOrderStatus('Completed')
-      OrderHandler.ensureOrderDirection('Buy')
-      OrderHandler.ensureOrderDirection('Sell')
+      OrderHandler.ensureOrderStatus('Created');
+      OrderHandler.ensureOrderStatus('Cancelled');
+      OrderHandler.ensureOrderStatus('Completed');
+      OrderHandler.ensureOrderDirection('Buy');
+      OrderHandler.ensureOrderDirection('Sell');
       initialized = true;
     }
-
   }
 
-  static async ensureOrderStatus (id: string) {
-    const status = await OrderStatus.get(id)
+  static async ensureOrderStatus(id: string) {
+    const status = await OrderStatus.get(id);
     if (!status) {
-      const status = new OrderStatus(id)
-      await status.save()
+      const status = new OrderStatus(id);
+      await status.save();
     }
   }
 
-  static async ensureOrderDirection (id: string) {
-    const direction = await OrderDirection.get(id)
+  static async ensureOrderDirection(id: string) {
+    const direction = await OrderDirection.get(id);
     if (!direction) {
-      const direction = new OrderDirection(id)
-      await direction.save()
+      const direction = new OrderDirection(id);
+      await direction.save();
     }
   }
 
-  static async handleEventNftmartCreatedOrder2 (event : SubstrateEvent){
+  static async handleEventNftmartCreatedOrder2(event: SubstrateEvent) {
     // console.log(`handle created order 2`)
     // it is ok for an event to have multiple handlers registered in the dispatcher
   }
 
-  static async handleEventNftmartCreatedOrder (event : SubstrateEvent){
+  static async handleEventNftmartCreatedOrder(event: SubstrateEvent) {
     // console.log(`handle created order 1`)
 
-    const {event: { data: [who, order_id] }} = event;
+    const {
+      event: {
+        data: [who, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
 
     const extrinsic = event.extrinsic;
@@ -79,55 +81,71 @@ export class OrderHandler {
 
     await AccountHandler.ensureAccount(who.toString());
 
-    let ord = (await api.query.nftmartOrder.orders.at(blockHash, who.toString(), orderId) as any).unwrap();
+    let ord = ((await api.query.nftmartOrder.orders.at(blockHash, who.toString(), orderId)) as any).unwrap();
 
     const currencyId = ord.currencyId.toString();
     // const categoryId = ord.categoryId.toString();
     const deposit = ord.deposit.toBigInt();
     const price = ord.price.toBigInt();
     const deadline = ord.deadline.toNumber();
-    const itemsJson = ord.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
+    const itemsJson = ord.items.map((item) => [
+      item.classId.toNumber(),
+      item.tokenId.toNumber(),
+      item.quantity.toNumber(),
+    ]);
     const commissionRate = ord.commissionRate.toNumber();
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
-      let item = itemsJson[i]
-      const classId = `${item[0]}`
-      const tokenId = `${item[1]}`
-      const nftId = `${classId}-${tokenId}`
-      const quantity = item[2]
-      await ClassHandler.ensureClass(classId)
+      let item = itemsJson[i];
+      const classId = `${item[0]}`;
+      const tokenId = `${item[1]}`;
+      const nftId = `${classId}-${tokenId}`;
+      const quantity = item[2];
+      await ClassHandler.ensureClass(classId);
       await NftHandler.ensureNft(classId, tokenId);
-      let orderItem = new OrderItem(`${orderId}-${i}`)
-      orderItem.nftId = nftId
-      orderItem.quantity = quantity
-      orderItem.orderId = orderId
-      await orderItem.save()
-      console.log(`created new order item`, classId, tokenId, quantity)
+      let orderItem = new OrderItem(`${orderId}-${i}`);
+      orderItem.nftId = nftId;
+      orderItem.quantity = quantity;
+      orderItem.orderId = orderId;
+      await orderItem.save();
+      console.log(`created new order item`, classId, tokenId, quantity);
+
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
     }
 
-    await AccountHandler.ensureAccount(origin)
+    await AccountHandler.ensureAccount(origin);
     // await CategoryHandler.ensureCategory(categoryId)
 
-    const order = await Order.get(orderId)
+    const order = await Order.get(orderId);
 
     // order.categoryId = categoryId
-    order.price = price
-    order.deadline = deadline
-    order.commissionRate = commissionRate
-    order.deposit = deposit
-    order.debug = args.toString()
-    order.sellerId = origin
-    order.intentId = "Sell"
+    order.price = price;
+    order.deadline = deadline;
+    order.commissionRate = commissionRate;
+    order.deposit = deposit;
+    order.debug = args.toString();
+    order.sellerId = origin;
+    order.intentId = 'Sell';
     order.eventCreatedId = eventId;
-    order.statusId = "Created"
+    order.statusId = 'Created';
 
-    await order.save()
+    await order.save();
   }
 
-  static async handleEventNftmartTakenOrder (event : SubstrateEvent){
-
-    const {event: { data: [buyer, owner, order_id] }} = event;
+  static async handleEventNftmartTakenOrder(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [buyer, owner, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
     let buyerId = buyer.toString();
     let ownerId = owner.toString();
@@ -150,16 +168,30 @@ export class OrderHandler {
 
     order.sellerId = ownerId;
     order.buyerId = origin;
-    order.statusId = "Completed";
-    order.intentId = "Sell"
+    order.statusId = 'Completed';
+    order.intentId = 'Sell';
     order.eventCompletedId = eventId;
 
-    await order.save()
+    await order.save();
+
+    /*
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
+    */
   }
 
-  static async handleEventNftmartRemovedOrder (event : SubstrateEvent){
-
-    const {event: { data: [who, order_id] }} = event;
+  static async handleEventNftmartRemovedOrder(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [who, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
 
     const extrinsic = event.extrinsic;
@@ -178,20 +210,35 @@ export class OrderHandler {
 
     const order = await Order.get(orderId);
 
-    order.statusId = "Cancelled";
-    order.intentId = "Sell"
-    order.sellerId = origin
+    order.statusId = 'Cancelled';
+    order.intentId = 'Sell';
+    order.sellerId = origin;
     order.eventCancelledId = eventId;
 
-    await order.save()
+    await order.save();
+
+    /*
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
+    */
   }
 
   /* ================================== offer ==================================== */
 
-  static async handleEventNftmartCreatedOffer (event : SubstrateEvent){
+  static async handleEventNftmartCreatedOffer(event: SubstrateEvent) {
     // console.log(`handle created order 1`)
 
-    const {event: { data: [who, order_id] }} = event;
+    const {
+      event: {
+        data: [who, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
 
     const extrinsic = event.extrinsic;
@@ -214,52 +261,68 @@ export class OrderHandler {
     const itemsJson = (args[3].toJSON() as number[][])
     */
 
-    let ofr = (await api.query.nftmartOrder.offers.at(blockHash, who.toString(), orderId) as any).unwrap();
+    let ofr = ((await api.query.nftmartOrder.offers.at(blockHash, who.toString(), orderId)) as any).unwrap();
 
     const currencyId = ofr.currencyId.toString();
     const price = ofr.price.toBigInt();
     const deadline = ofr.deadline.toNumber();
-    const itemsJson = ofr.items.map((item)=> [item.classId.toNumber(), item.tokenId.toNumber(), item.quantity.toNumber()]);
+    const itemsJson = ofr.items.map((item) => [
+      item.classId.toNumber(),
+      item.tokenId.toNumber(),
+      item.quantity.toNumber(),
+    ]);
     const commissionRate = ofr.commissionRate.toNumber();
 
     await OrderHandler.ensureOrder(orderId);
     for (let i in itemsJson) {
-      let item = itemsJson[i]
-      const classId = `${item[0]}`
-      const tokenId = `${item[1]}`
-      const nftId = `${classId}-${tokenId}`
-      const quantity = item[2]
-      await ClassHandler.ensureClass(classId)
+      let item = itemsJson[i];
+      const classId = `${item[0]}`;
+      const tokenId = `${item[1]}`;
+      const nftId = `${classId}-${tokenId}`;
+      const quantity = item[2];
+      await ClassHandler.ensureClass(classId);
       await NftHandler.ensureNft(classId, tokenId);
-      let orderItem = new OrderItem(`${orderId}-${i}`)
-      orderItem.nftId = nftId
-      orderItem.quantity = quantity
-      orderItem.orderId = orderId
-      await orderItem.save()
-      console.log(`created new offer item`, classId, tokenId, quantity)
+      let orderItem = new OrderItem(`${orderId}-${i}`);
+      orderItem.nftId = nftId;
+      orderItem.quantity = quantity;
+      orderItem.orderId = orderId;
+      await orderItem.save();
+      console.log(`created new offer item`, classId, tokenId, quantity);
+
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
     }
 
-    await AccountHandler.ensureAccount(origin)
+    await AccountHandler.ensureAccount(origin);
     // await CategoryHandler.ensureCategory(categoryId)
 
-    const order = await Order.get(orderId)
+    const order = await Order.get(orderId);
 
     // order.categoryId = categoryId
-    order.price = price
-    order.deadline = deadline
+    order.price = price;
+    order.deadline = deadline;
     order.commissionRate = commissionRate;
-    order.debug = args.toString()
-    order.buyerId = origin
+    order.debug = args.toString();
+    order.buyerId = origin;
     order.eventCreatedId = eventId;
-    order.intentId = "Buy"
-    order.statusId = "Created"
+    order.intentId = 'Buy';
+    order.statusId = 'Created';
 
-    await order.save()
+    await order.save();
   }
 
-  static async handleEventNftmartTakenOffer (event : SubstrateEvent){
-
-    const {event: { data: [owner, buyer, order_id] }} = event;
+  static async handleEventNftmartTakenOffer(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [owner, buyer, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
     let buyerId = buyer.toString();
     let ownerId = owner.toString();
@@ -281,16 +344,30 @@ export class OrderHandler {
 
     order.buyerId = buyerId;
     order.sellerId = origin;
-    order.statusId = "Completed";
-    order.intentId = "Buy"
-    order.eventCompletedId = eventId
+    order.statusId = 'Completed';
+    order.intentId = 'Buy';
+    order.eventCompletedId = eventId;
 
-    await order.save()
+    await order.save();
+
+    /*
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
+    */
   }
 
-  static async handleEventNftmartRemovedOffer (event : SubstrateEvent){
-
-    const {event: { data: [who, order_id] }} = event;
+  static async handleEventNftmartRemovedOffer(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [who, order_id],
+      },
+    } = event;
     let orderId = order_id.toString();
 
     const extrinsic = event.extrinsic;
@@ -310,11 +387,21 @@ export class OrderHandler {
     const order = await Order.get(orderId);
 
     order.buyerId = origin;
-    order.statusId = "Cancelled";
-    order.intentId = "Buy"
-    order.eventCancelledId = eventId
+    order.statusId = 'Cancelled';
+    order.intentId = 'Buy';
+    order.eventCancelledId = eventId;
 
-    await order.save()
+    await order.save();
+
+    /*
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
+    */
   }
-
 }

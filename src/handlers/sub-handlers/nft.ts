@@ -3,6 +3,7 @@ import { Call } from '../../types/models/Call'
 import { Class } from "../../types/models/Class"
 import { Nft } from "../../types/models/Nft"
 import { NftTransfer } from "../../types/models/NftTransfer"
+import { NftEvent } from "../../types/models/NftEvent"
 import { CallHandler } from '../call'
 import { ExtrinsicHandler } from '../extrinsic'
 import { DispatchedCallData } from '../types'
@@ -169,6 +170,15 @@ export class NftHandler {
     nft.eventId = eventId;
 
     await nft.save();
+
+    const nftEvent = new NftEvent(`${id}-${eventId}`);
+    nftEvent.nftId = id;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
   }
 
   static async handleEventNftmartTransferredToken (event : SubstrateEvent){
@@ -182,6 +192,8 @@ export class NftHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
 
     await AccountHandler.ensureAccount(who.toString());
     await AccountHandler.ensureAccount(to.toString());
@@ -192,6 +204,15 @@ export class NftHandler {
     nft.ownerId = to.toString();
 
     await nft.save();
+
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
   }
 
   static async handleEventNftmartBurnedToken (event : SubstrateEvent){
@@ -206,6 +227,8 @@ export class NftHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
 
     await AccountHandler.ensureAccount(who.toString());
     await ClassHandler.ensureClass(classId);
@@ -215,6 +238,15 @@ export class NftHandler {
     nft.burned = true;
 
     await nft.save();
+
+    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+    nftEvent.nftId = nftId;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save()
   }
 
 }

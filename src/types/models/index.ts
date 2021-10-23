@@ -12,6 +12,8 @@ export {Call} from "./Call"
 
 export {Nft} from "./Nft"
 
+export {NftEvent} from "./NftEvent"
+
 export {Account} from "./Account"
 
 export {Token} from "./Token"

@@ -83,6 +83,20 @@ type Nft @entity {
   debug: String
 }
 
+type NftEvent @entity {
+  id: ID! # ${nftId}_${eventId}
+
+  nft: Nft!
+  quantity: Int
+
+  event: Event!
+  section: String!
+  method: String!
+  sectionMethod: String! # ${section}.{method}
+
+  debug: String
+}
+
 type Account @entity {
   id: ID!
 
