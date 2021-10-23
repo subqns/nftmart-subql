@@ -1,17 +1,16 @@
+import type {CallBase, AnyTuple} from '@polkadot/types/types';
+import type {SubstrateExtrinsic} from '@subquery/types';
+import {Dispatcher} from '../helpers/dispatcher';
 
-import type { CallBase, AnyTuple } from '@polkadot/types/types'
-import type { SubstrateExtrinsic } from '@subquery/types'
-import { Dispatcher } from '../helpers/dispatcher'
-
-export type AnyCall = CallBase<AnyTuple>
+export type AnyCall = CallBase<AnyTuple>;
 
 export interface DispatchedCallData {
-  id: string
-  call: AnyCall
-  extrinsic: SubstrateExtrinsic
-  isSuccess: boolean
+  id: string;
+  call: AnyCall;
+  extrinsic: SubstrateExtrinsic;
+  isSuccess: boolean;
 }
 
-export type CallDispatcher = Dispatcher<DispatchedCallData>
+export type CallDispatcher = Dispatcher<DispatchedCallData>;
 
-export type callHandler = (data: DispatchedCallData) => Promise<any>
+export type callHandler = (data: DispatchedCallData) => Promise<any>;

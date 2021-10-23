@@ -1,68 +1,67 @@
-import { SubstrateExtrinsic, SubstrateEvent } from '@subquery/types'
-import { Call } from '../../types/models/Call'
-import { Class } from "../../types/models/Class"
-import { Nft } from "../../types/models/Nft"
-import { NftTransfer } from "../../types/models/NftTransfer"
-import { NftEvent } from "../../types/models/NftEvent"
-import { CallHandler } from '../call'
-import { ExtrinsicHandler } from '../extrinsic'
-import { DispatchedCallData } from '../types'
-import { AccountHandler } from './account'
-import { hexToAscii } from '../../helpers/common'
-import { ClassHandler } from './class'
-import { api, logger } from '@subquery/types'
-import { BadData } from "../../types/models/BadData"
+import {SubstrateExtrinsic, SubstrateEvent} from '@subquery/types';
+import {Call} from '../../types/models/Call';
+import {Class} from '../../types/models/Class';
+import {Nft} from '../../types/models/Nft';
+import {NftTransfer} from '../../types/models/NftTransfer';
+import {NftEvent} from '../../types/models/NftEvent';
+import {CallHandler} from '../call';
+import {ExtrinsicHandler} from '../extrinsic';
+import {DispatchedCallData} from '../types';
+import {AccountHandler} from './account';
+import {hexToAscii} from '../../helpers/common';
+import {ClassHandler} from './class';
+import {api, logger} from '@subquery/types';
+import {BadData} from '../../types/models/BadData';
 
 export class NftHandler {
-
   // 4829-3, 4499-3: TransferredToken
-  static async handleCallNftmartDoTransfer({ id, call, extrinsic, isSuccess }: DispatchedCallData) {
-    const args = call.args
+  static async handleCallNftmartDoTransfer({id, call, extrinsic, isSuccess}: DispatchedCallData) {
+    const args = call.args;
 
-    const extrinsicHandler = new ExtrinsicHandler(extrinsic)
+    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
 
-    const classId = args[0].toString()
-    const tokenId = args[1].toString()
+    const classId = args[0].toString();
+    const tokenId = args[1].toString();
     const nftId = `${classId}-${tokenId}`;
     await ClassHandler.ensureClass(classId);
-    await NftHandler.ensureNft(classId, tokenId)
-    const price = (args[2] as any).toBigInt()
-    const seller = args[3].toString()
-    const buyer = extrinsicHandler.signer.toString()
-    await AccountHandler.ensureAccount(seller)
-    await AccountHandler.ensureAccount(buyer)
+    await NftHandler.ensureNft(classId, tokenId);
+    const price = (args[2] as any).toBigInt();
+    const seller = args[3].toString();
+    const buyer = extrinsicHandler.signer.toString();
+    await AccountHandler.ensureAccount(seller);
+    await AccountHandler.ensureAccount(buyer);
 
-    const extrinsicHash = extrinsicHandler.id
+    const extrinsicHash = extrinsicHandler.id;
 
-    const nftTransfer = new NftTransfer(nftId)
+    const nftTransfer = new NftTransfer(nftId);
 
     nftTransfer.debug = `${nftId}`;
 
-    nftTransfer.toId = buyer
-    nftTransfer.fromId = seller
-    nftTransfer.nftId = nftId
-    nftTransfer.extrinsicId = extrinsicHash
-    nftTransfer.timestamp = extrinsicHandler.timestamp
-    nftTransfer.isSuccess = isSuccess
-    nftTransfer.blockId = extrinsic.block.block.hash.toString()
+    nftTransfer.toId = buyer;
+    nftTransfer.fromId = seller;
+    nftTransfer.nftId = nftId;
+    nftTransfer.extrinsicId = extrinsicHash;
+    nftTransfer.timestamp = extrinsicHandler.timestamp;
+    nftTransfer.isSuccess = isSuccess;
+    nftTransfer.blockId = extrinsic.block.block.hash.toString();
 
-    await nftTransfer.save()
+    await nftTransfer.save();
   }
 
-  static async ensureNft (classId: string, tokenId: string): Promise<void> {
+  static async ensureNft(classId: string, tokenId: string): Promise<void> {
     const id = `${classId}-${tokenId}`;
 
-    let nft = await Nft.get(id)
+    let nft = await Nft.get(id);
 
     if (!nft) {
-      nft = new Nft(id)
-      nft.classId = classId
-      nft.tokenId = tokenId
-      await nft.save()
+      nft = new Nft(id);
+      nft.classId = classId;
+      nft.tokenId = tokenId;
+      await nft.save();
     }
   }
 
-  static async handleEventNftmartMintedToken (event : SubstrateEvent){
+  static async handleEventNftmartMintedToken(event: SubstrateEvent) {
     // skip
     // can be inferred from the following events or corresponding calls that emit these events
     /*
@@ -99,7 +98,11 @@ export class NftHandler {
 			charge_royalty: Option<bool>,
     */
 
-    const {event: { data: [who, to, class_id, token_id, quantity] }} = event;
+    const {
+      event: {
+        data: [who, to, class_id, token_id, quantity],
+      },
+    } = event;
     const whoId = who.toString();
     const toId = to.toString();
     let classId = class_id.toString();
@@ -140,8 +143,8 @@ export class NftHandler {
       "quantity": 20
     }
     */
-    if (!tokendata.isEmpty){
-      let token = (tokendata as any).unwrap()
+    if (!tokendata.isEmpty) {
+      let token = (tokendata as any).unwrap();
       nft.debug = JSON.stringify(token.toHuman());
       let quantity = token.quantity.toNumber();
       nft.royaltyRate = token.data.royalty_rate.toNumber();
@@ -149,16 +152,16 @@ export class NftHandler {
       // nft.metadata = metadataStr;
       let metadataStr = hexToAscii(token.metadata.toString());
       console.log('metadataStr', metadataStr);
-      nft.metadata = await (async function(){
+      nft.metadata = await (async function () {
         try {
           return JSON.parse(metadataStr);
-        } catch(e) {
+        } catch (e) {
           const badData = new BadData(`${blockHeight}-event-${id}`);
           badData.data = metadataStr;
           badData.reason = `${e}`;
           await badData.save();
         }
-        return {}
+        return {};
       })();
     }
 
@@ -178,12 +181,15 @@ export class NftHandler {
     nftEvent.section = event.event.section;
     nftEvent.method = event.event.method;
     nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
+    await nftEvent.save();
   }
 
-  static async handleEventNftmartTransferredToken (event : SubstrateEvent){
-
-    const {event: { data: [who, to, class_id, token_id, quantity] }} = event;
+  static async handleEventNftmartTransferredToken(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [who, to, class_id, token_id, quantity],
+      },
+    } = event;
     let classId = class_id.toString();
     let tokenId = token_id.toString();
     let nftId = `${classId}-${tokenId}`;
@@ -212,12 +218,15 @@ export class NftHandler {
     nftEvent.section = event.event.section;
     nftEvent.method = event.event.method;
     nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
+    await nftEvent.save();
   }
 
-  static async handleEventNftmartBurnedToken (event : SubstrateEvent){
-
-    const {event: { data: [who, class_id, token_id, quantity, deposit] }} = event;
+  static async handleEventNftmartBurnedToken(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [who, class_id, token_id, quantity, deposit],
+      },
+    } = event;
     let classId = class_id.toString();
     let tokenId = token_id.toString();
     let nftId = `${classId}-${tokenId}`;
@@ -246,7 +255,6 @@ export class NftHandler {
     nftEvent.section = event.event.section;
     nftEvent.method = event.event.method;
     nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
+    await nftEvent.save();
   }
-
 }

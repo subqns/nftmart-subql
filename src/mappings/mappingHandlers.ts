@@ -1,23 +1,23 @@
-import { SubstrateBlock, SubstrateExtrinsic, SubstrateEvent } from '@subquery/types'
+import {SubstrateBlock, SubstrateExtrinsic, SubstrateEvent} from '@subquery/types';
 
-import { BlockHandler } from '../handlers/block'
-import { EventHandler, ExtrinsicHandler } from '../handlers'
-import { CallHandler } from '../handlers/call'
+import {BlockHandler} from '../handlers/block';
+import {EventHandler, ExtrinsicHandler} from '../handlers';
+import {CallHandler} from '../handlers/call';
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-    const handler = new BlockHandler(block)
+  const handler = new BlockHandler(block);
 
-    await handler.save()
+  await handler.save();
 }
 
 export async function handleEvent(event: SubstrateEvent): Promise<void> {
-    const handler = new EventHandler(event)
+  const handler = new EventHandler(event);
 
-    await handler.save()
+  await handler.save();
 }
 
 export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {
-    const extrinsicHandler = new ExtrinsicHandler(extrinsic);
+  const extrinsicHandler = new ExtrinsicHandler(extrinsic);
 
-    await extrinsicHandler.save()
+  await extrinsicHandler.save();
 }

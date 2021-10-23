@@ -1,4 +1,4 @@
-import { Codec } from '@polkadot/types/types'
+import {Codec} from '@polkadot/types/types';
 
 interface Token {
   name: string;
@@ -48,14 +48,14 @@ export const TOKEN_DECIMAL = {
   KSM: 12,
   LKSM: 12,
   SDN: 18,
-  KILT: 15
-}
+  KILT: 15,
+};
 
-export function resolveToken (token: Codec) {
+export function resolveToken(token: Codec) {
   return {
     name: 'unknown',
     isDex: false,
     isToken: false,
-    isERC20: false
-  }
+    isERC20: false,
+  };
 }
