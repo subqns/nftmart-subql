@@ -1,16 +1,16 @@
 specVersion: 0.0.2
-description: "nftmart (https://github.com/nftt-studio/nftmart-node) subquery project"
-repository: "https://github.com/subqns/nftmart-subql.git"
+description: 'nftmart (https://github.com/nftt-studio/nftmart-node) subquery project'
+repository: 'https://github.com/subqns/nftmart-subql.git'
 schema: ./schema.graphql
 network:
-# endpoint: wss://mandala6.laminar.codes
-# endpoint: "ws://8.136.111.191:9944"
-# endpoint: ws://81.70.132.13:9944
-# endpoint: ws://81.70.132.13:9966
-# endpoint: ws://tmp-chain.bcdata.top
-# endpoint: wss://staging-ws.nftmart.io
-# endpoint: ws://127.0.0.1:9944
-  endpoint: ws://43.129.72.231:9999
+  # endpoint: wss://mandala6.laminar.codes
+  # endpoint: "ws://8.136.111.191:9944"
+  # endpoint: ws://81.70.132.13:9944
+  # endpoint: ws://81.70.132.13:9966
+  # endpoint: ws://tmp-chain.bcdata.top
+  endpoint: wss://staging-ws.nftmart.io
+  # endpoint: ws://127.0.0.1:9944
+  # endpoint: ws://43.129.72.231:9999
   types:
     Properties: u8
     NFTMetadata: Vec<u8>
