@@ -40,6 +40,13 @@ export class AuctionItem implements Entity {
     }
 
 
+    static async getByAuctionId(auctionId: string): Promise<AuctionItem[] | undefined>{
+      
+      const records = await store.getByField('AuctionItem', 'auctionId', auctionId);
+      return records.map(record => AuctionItem.create(record));
+      
+    }
+
 
     static create(record){
         let entity = new AuctionItem(record.id);

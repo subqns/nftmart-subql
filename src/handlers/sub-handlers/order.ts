@@ -174,16 +174,18 @@ export class OrderHandler {
 
     await order.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const orderItems: OrderItem[] = (await OrderItem.getByOrderId(orderId)) ?? [];
+    for (let orderItem of orderItems) {
+      const nftId = orderItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartRemovedOrder(event: SubstrateEvent) {
@@ -217,16 +219,18 @@ export class OrderHandler {
 
     await order.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const orderItems: OrderItem[] = (await OrderItem.getByOrderId(orderId)) ?? [];
+    for (let orderItem of orderItems) {
+      const nftId = orderItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   /* ================================== offer ==================================== */
@@ -350,16 +354,18 @@ export class OrderHandler {
 
     await order.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const orderItems: OrderItem[] = (await OrderItem.getByOrderId(orderId)) ?? [];
+    for (let orderItem of orderItems) {
+      const nftId = orderItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartRemovedOffer(event: SubstrateEvent) {
@@ -393,15 +399,17 @@ export class OrderHandler {
 
     await order.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const orderItems: OrderItem[] = (await OrderItem.getByOrderId(orderId)) ?? [];
+    for (let orderItem of orderItems) {
+      const nftId = orderItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 }

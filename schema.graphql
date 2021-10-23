@@ -195,7 +195,7 @@ type OrderItem @entity {
 
   nft: Nft!
   quantity: Int!
-  order: Order
+  order: Order @index
 }
 
 type AuctionItem @entity {
@@ -203,7 +203,7 @@ type AuctionItem @entity {
 
   nft: Nft!
   quantity: Int!
-  auction: Auction
+  auction: Auction @index
 }
 
 type Auction @entity {

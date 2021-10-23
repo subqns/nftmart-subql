@@ -152,16 +152,18 @@ export class AuctionHandler {
 
     await auction.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartRedeemedBritishAuction(event: SubstrateEvent) {
@@ -192,16 +194,18 @@ export class AuctionHandler {
 
     await auction.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   // TODO: generate bid entry
@@ -233,16 +237,18 @@ export class AuctionHandler {
 
     await auction.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartBidBritishAuction(event: SubstrateEvent) {
@@ -296,16 +302,18 @@ export class AuctionHandler {
     ac.bidCount = bidCount;
     await ac.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartCreatedDutchAuction(event: SubstrateEvent) {
@@ -433,16 +441,18 @@ export class AuctionHandler {
 
     await auction.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartRedeemedDutchAuction(event: SubstrateEvent) {
@@ -473,16 +483,18 @@ export class AuctionHandler {
 
     await auction.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 
   static async handleEventNftmartBidDutchAuction(event: SubstrateEvent) {
@@ -536,16 +548,18 @@ export class AuctionHandler {
     ac.bidCount = bidCount;
     await ac.save();
 
-    /*
-    const nftEvent = new NftEvent(`${nftId}-${eventId}`);
-    nftEvent.nftId = nftId;
-    nftEvent.eventId = eventId;
-    nftEvent.quantity = 1;
-    nftEvent.section = event.event.section;
-    nftEvent.method = event.event.method;
-    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
-    await nftEvent.save()
-    */
+    const auctionItems: AuctionItem[] = (await AuctionItem.getByAuctionId(auctionId)) ?? [];
+    for (let auctionItem of auctionItems) {
+      const nftId = auctionItem.nftId;
+      const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+      nftEvent.nftId = nftId;
+      nftEvent.eventId = eventId;
+      nftEvent.quantity = 1;
+      nftEvent.section = event.event.section;
+      nftEvent.method = event.event.method;
+      nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+      await nftEvent.save();
+    }
   }
 }
 

@@ -40,6 +40,13 @@ export class OrderItem implements Entity {
     }
 
 
+    static async getByOrderId(orderId: string): Promise<OrderItem[] | undefined>{
+      
+      const records = await store.getByField('OrderItem', 'orderId', orderId);
+      return records.map(record => OrderItem.create(record));
+      
+    }
+
 
     static create(record){
         let entity = new OrderItem(record.id);
