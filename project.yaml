@@ -8,7 +8,8 @@ network:
   # endpoint: ws://81.70.132.13:9944
   # endpoint: ws://81.70.132.13:9966
   # endpoint: ws://tmp-chain.bcdata.top
-  endpoint: wss://staging-ws.nftmart.io
+  # endpoint: wss://staging-ws.nftmart.io
+  endpoint: wss://staging.nftmart.io/rpc/ws
   # endpoint: ws://127.0.0.1:9944
   # endpoint: ws://43.129.72.231:9999
   types:
