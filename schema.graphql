@@ -8,6 +8,8 @@ type Block @entity {
   parentHash: String
   specVersion: Int
 
+  expiredAuctions: [Auction] @derivedFrom(field: "deadlineBlock")
+
   extrinsics: [Extrinsic] @derivedFrom(field: "block")
   events: [Event] @derivedFrom(field: "block")
 }
@@ -238,6 +240,7 @@ type Auction @entity {
   currencyId: Int # per65535
   minRaise: Int # per65535
   deposit: BigInt
+  deadlineBlock: Block @index # block id
   deadline: Int # block number
   items: [AuctionItem] @derivedFrom(field: "auction")
   bids: [AuctionBid] @derivedFrom(field: "auction")

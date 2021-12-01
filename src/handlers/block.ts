@@ -1,6 +1,10 @@
 import {SubstrateBlock} from '@subquery/types';
 import {getBlockTimestamp} from '../helpers';
 import {Block} from '../types/models/Block';
+import {Nft} from '../types/models/Nft';
+import {Auction} from '../types/models/Auction';
+import {AuctionItem} from '../types/models/AuctionItem';
+import {NftHandler} from './sub-handlers/nft';
 
 export class BlockHandler {
   private block: SubstrateBlock;
@@ -37,6 +41,25 @@ export class BlockHandler {
     return this.block.block.header.parentHash.toString();
   }
 
+  async expiredAuctionsHook() {
+    const expiredAuctions = await Auction.getByDeadlineBlockId(`${this.number}`);
+    for (let auc of expiredAuctions) {
+      const items = await AuctionItem.getByAuctionId(auc.id);
+      for (let item of items) {
+        let {nftId, auctionId} = item;
+        const [classId, tokenId] = nftId.split('-');
+        await NftHandler.ensureNft(classId, tokenId);
+        let nft = await Nft.get(nftId);
+        nft.statusId = 'Idle';
+        nft.updateBlockId = `${this.number}`;
+        nft.updateTimestamp = this.blockTimestamp;
+        nft.price = BigInt(-1);
+        nft.debug = `Auction Timeout`;
+        await nft.save();
+      }
+    }
+  }
+
   public async save() {
     const block = new Block(`${this.number}`);
 
@@ -47,5 +70,7 @@ export class BlockHandler {
     block.parentHash = this.parentHash;
 
     await block.save();
+
+    await this.expiredAuctionsHook();
   }
 }

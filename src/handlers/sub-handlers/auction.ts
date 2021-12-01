@@ -7,6 +7,7 @@ import {Nft} from '../../types/models/Nft';
 import {CallHandler} from '../call';
 import {ExtrinsicHandler} from '../extrinsic';
 import {EventHandler} from '../event';
+import {BlockHandler} from '../block';
 import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
@@ -133,6 +134,8 @@ export class AuctionHandler {
     auction.initPrice = initPrice;
     auction.hammerPrice = hammerPrice;
     auction.deadline = deadline;
+    await BlockHandler.ensureBlock(`${deadline}`);
+    auction.deadlineBlockId = `${deadline}`;
     auction.allowDelay = allowDelay;
     auction.commissionRate = commissionRate;
     auction.minRaise = minRaise;
@@ -503,6 +506,8 @@ export class AuctionHandler {
     auction.minPrice = minPrice;
     auction.maxPrice = maxPrice;
     auction.deadline = deadline;
+    await BlockHandler.ensureBlock(`${deadline}`);
+    auction.deadlineBlockId = `${deadline}`;
     auction.allowBritishAuction = allowBritishAuction;
     auction.commissionRate = commissionRate;
     auction.minRaise = minRaise;
