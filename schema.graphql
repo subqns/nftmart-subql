@@ -2,7 +2,8 @@ type Block @entity {
   id: ID!
   uuid: Uuid
 
-  number: BigInt
+  hash: String
+  number: BigInt @index
   timestamp: Date
   parentHash: String
   specVersion: Int
@@ -26,7 +27,6 @@ type Extrinsic @entity {
   isSuccess: Boolean
 
   block: Block #create relation to block
-
   events: [Event] @derivedFrom(field: "extrinsic")
   calls: [Call] @derivedFrom(field: "extrinsic")
 }
@@ -56,7 +56,6 @@ type Call @entity {
   signer: Account #create ration to account
   extrinsic: Extrinsic #create relation to extrinsic
   parentCall: Call #create relation to call
-
   calls: [Call] @derivedFrom(field: "parentCall")
 }
 
@@ -80,19 +79,37 @@ type Nft @entity {
 
   # views: [NftView] @derivedFrom(field: "nft")
 
+  dealPrice: BigInt
+  price: BigInt
+  status: NftStatus
+  createBlock: Block
+  createTimestamp: Date
+  updateBlock: Block
+  updateTimestamp: Date
+
   debug: String
+}
+
+type NftStatus @entity {
+  id: ID! # one of Idle / ForSale / AtAuction / Removed
+  nfts: [Nft] @derivedFrom(field: "status")
 }
 
 type NftEvent @entity {
   id: ID! # ${nftId}_${eventId}
-
   nft: Nft!
   quantity: Int
 
+  block: Block!
   event: Event!
   section: String!
   method: String!
   sectionMethod: String! # ${section}.{method}
+  timestamp: Date
+  from: Account
+  to: Account
+  price: BigInt
+  params: String
 
   debug: String
 }
@@ -143,6 +160,11 @@ type Category @entity {
 
   classes: [CategoryClass] @derivedFrom(field: "category")
 
+  block: Block
+  timestamp: Date
+  burned: Boolean
+  event: Event
+
   debug: String
 }
 
@@ -167,6 +189,8 @@ type Class @entity {
 
   transferable: Boolean
   burnable: Boolean
+
+  burned: Boolean
 
   royaltyRate: Int
   categories: [CategoryClass] @derivedFrom(field: "class")
@@ -220,11 +244,9 @@ type Auction @entity {
   bidCount: Int
   commissionRate: Int
   blockCreated: Int # block number
-
   eventCreated: Event #create relation to event
   eventCancelled: Event #create relation to event
   eventCompleted: Event #create relation to event
-
   # british auction
   hammerPrice: BigInt
   initPrice: BigInt
@@ -256,20 +278,17 @@ type Order @entity {
 
   intent: OrderDirection # String # one of Buy / Sell
   status: OrderStatus # String # one of Created / Cancelled / Completed
-
   price: BigInt
   deposit: BigInt
   commissionRate: Int
 
   seller: Account #create relation to Account
   buyer: Account #create relation to Account
-
   items: [OrderItem] @derivedFrom(field: "order")
 
   eventCreated: Event #create relation to event
   eventCancelled: Event #create relation to event
   eventCompleted: Event #create relation to event
-
   debug: String
 }
 

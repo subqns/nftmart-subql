@@ -4,17 +4,21 @@ import {Class} from '../../types/models/Class';
 import {Nft} from '../../types/models/Nft';
 import {NftTransfer} from '../../types/models/NftTransfer';
 import {NftEvent} from '../../types/models/NftEvent';
+import {NftStatus} from '../../types/models/NftStatus';
 import {CallHandler} from '../call';
 import {ExtrinsicHandler} from '../extrinsic';
 import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
+import {getBlockTimestamp} from '../../helpers';
 import {ClassHandler} from './class';
 import {api, logger} from '@subquery/types';
 import {BadData} from '../../types/models/BadData';
 
 export class NftHandler {
   // 4829-3, 4499-3: TransferredToken
+  public static initialized: boolean = false;
+
   static async handleCallNftmartDoTransfer({id, call, extrinsic, isSuccess}: DispatchedCallData) {
     const args = call.args;
 
@@ -43,15 +47,29 @@ export class NftHandler {
     nftTransfer.extrinsicId = extrinsicHash;
     nftTransfer.timestamp = extrinsicHandler.timestamp;
     nftTransfer.isSuccess = isSuccess;
-    nftTransfer.blockId = extrinsic.block.block.hash.toString();
+    nftTransfer.blockId = extrinsic?.block?.block?.header?.number?.toString();
 
     await nftTransfer.save();
   }
 
+  static async ensureNftStatuses() {
+    if (!this.initialized) {
+      await NftHandler.ensureNftStatus('Idle');
+      await NftHandler.ensureNftStatus('ForSale');
+      await NftHandler.ensureNftStatus('AtAuction');
+      await NftHandler.ensureNftStatus('Removed');
+      this.initialized = true;
+    }
+  }
+
   static async ensureNft(classId: string, tokenId: string): Promise<void> {
+    await ClassHandler.ensureClass(classId);
+
     const id = `${classId}-${tokenId}`;
 
     let nft = await Nft.get(id);
+
+    await NftHandler.ensureNftStatuses();
 
     if (!nft) {
       nft = new Nft(id);
@@ -59,6 +77,123 @@ export class NftHandler {
       nft.tokenId = tokenId;
       await nft.save();
     }
+  }
+
+  static async ensureNftStatus(id: string) {
+    const status = await NftStatus.get(id);
+    if (!status) {
+      const status = new NftStatus(id);
+      await status.save();
+    }
+  }
+
+  static async handleEventNftmartUpdatedToken(event: SubstrateEvent) {
+    const {
+      event: {
+        data: [who, class_id, token_id],
+      },
+    } = event;
+    const whoId = who.toString();
+    let classId = class_id.toString();
+    let tokenId = token_id.toString();
+    let id = `${classId}-${tokenId}`;
+
+    await NftHandler.ensureNft(classId, tokenId);
+
+    console.log('UpdatedToken:', id);
+
+    const origin = event.extrinsic?.extrinsic?.signer?.toString();
+    // const Args = event.extrinsic?.extrinsic?.args;
+    // console.log(Args.toString())
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
+    const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
+
+    await AccountHandler.ensureAccount(who.toString());
+    await ClassHandler.ensureClass(class_id.toString());
+
+    const nft = await Nft.get(id);
+    nft.classId = classId;
+    nft.tokenId = tokenId;
+    nft.quantity = 1;
+
+    let tokendata = await api.query.ormlNft.tokens.at(blockHash, classId, tokenId);
+    let metadataStr = '{}';
+    /*
+    {
+      "metadata": "0x64656d6f206e6674206d65746164617461",
+      "data": {
+        "deposit": 11700000000,
+        "createBlock": 15109,
+        "royalty": true,
+        "creator": "65ADzWZUAKXQGZVhQ7ebqRdqEzMEftKytB8a7rknW82EASXB",
+        "royalty_beneficiary": "65ADzWZUAKXQGZVhQ7ebqRdqEzMEftKytB8a7rknW82EASXB"
+      },
+      "quantity": 20
+    }
+    */
+    console.log('isEmpty:', tokendata.isEmpty);
+    console.log((tokendata as any).toHuman());
+    if (!tokendata.isEmpty) {
+      let token = (tokendata as any).unwrap();
+      nft.debug = JSON.stringify(token.toHuman());
+      let quantity = token.quantity.toNumber();
+      nft.royaltyRate = token.data.royalty_rate.toNumber();
+      nft.deposit = token.data.deposit.toBigInt();
+      // nft.metadata = metadataStr;
+      let metadataStr = hexToAscii(token.metadata.toString());
+      console.log('metadataStr', metadataStr);
+      nft.metadata = await (async function () {
+        try {
+          return JSON.parse(metadataStr);
+        } catch (e) {
+          const badData = new BadData(`${blockHeight}-event-${id}`);
+          badData.data = metadataStr;
+          badData.reason = `${e}`;
+          await badData.save();
+        }
+        return {};
+      })();
+
+      // console.log(token.data);
+      nft.royaltyBeneficiaryId = token.data.royaltyBeneficiary.toString();
+      nft.creatorId = token.data.creator.toString();
+      // nft.ownerId = fromId;
+      nft.eventId = eventId;
+    }
+
+    // console.log(metadataStr, chargeRoyalty);
+
+    // nft.createBlockId = blockHeight;
+    // nft.createTimestamp = blockTimestamp;
+    nft.updateBlockId = blockHeight;
+    nft.updateTimestamp = blockTimestamp;
+    // nft.statusId = "Idle";
+
+    nft.debug = `${event.event.section}.${event.event.method}`;
+
+    await NftHandler.ensureNftStatuses();
+
+    await nft.save();
+
+    const nftEvent = new NftEvent(`${id}-${eventId}`);
+
+    nftEvent.blockId = blockHeight;
+    nftEvent.timestamp = blockTimestamp;
+    nftEvent.fromId = who.toString();
+    // nftEvent.toId = to.toString();
+    nftEvent.price = BigInt(-1);
+    nftEvent.params = `${event.event.data}`;
+
+    nftEvent.nftId = id;
+    nftEvent.eventId = eventId;
+    nftEvent.quantity = 1;
+    nftEvent.section = event.event.section;
+    nftEvent.method = event.event.method;
+    nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
+    await nftEvent.save();
   }
 
   static async handleEventNftmartMintedToken(event: SubstrateEvent) {
@@ -115,7 +250,9 @@ export class NftHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     // const Args = event.extrinsic?.extrinsic?.args;
     // console.log(Args.toString())
+    const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -126,9 +263,8 @@ export class NftHandler {
     const nft = new Nft(id);
     nft.classId = classId;
     nft.tokenId = tokenId;
-    nft.quantity = quant;
 
-    let tokendata = await api.query.ormlNft.tokens(classId, tokenId);
+    let tokendata = await api.query.ormlNft.tokens.at(blockHash, classId, tokenId);
     let metadataStr = '{}';
     /*
     {
@@ -143,10 +279,13 @@ export class NftHandler {
       "quantity": 20
     }
     */
+    console.log('isEmpty:', tokendata.isEmpty);
+    console.log((tokendata as any).toHuman());
     if (!tokendata.isEmpty) {
       let token = (tokendata as any).unwrap();
       nft.debug = JSON.stringify(token.toHuman());
       let quantity = token.quantity.toNumber();
+      nft.quantity = quantity;
       nft.royaltyRate = token.data.royalty_rate.toNumber();
       nft.deposit = token.data.deposit.toBigInt();
       // nft.metadata = metadataStr;
@@ -167,14 +306,30 @@ export class NftHandler {
 
     // console.log(metadataStr, chargeRoyalty);
 
+    nft.createBlockId = blockHeight;
+    nft.createTimestamp = blockTimestamp;
+    nft.updateBlockId = blockHeight;
+    nft.updateTimestamp = blockTimestamp;
+    nft.statusId = 'Idle';
+
     nft.royaltyBeneficiaryId = toId;
     nft.creatorId = toId;
     nft.ownerId = toId;
     nft.eventId = eventId;
 
+    await NftHandler.ensureNftStatuses();
+
     await nft.save();
 
     const nftEvent = new NftEvent(`${id}-${eventId}`);
+
+    nftEvent.blockId = blockHeight;
+    nftEvent.timestamp = blockTimestamp;
+    nftEvent.fromId = who.toString();
+    nftEvent.toId = to.toString();
+    nftEvent.price = BigInt(-1);
+    nftEvent.params = `${event.event.data}`;
+
     nftEvent.nftId = id;
     nftEvent.eventId = eventId;
     nftEvent.quantity = 1;
@@ -198,6 +353,7 @@ export class NftHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -209,9 +365,19 @@ export class NftHandler {
     const nft = await Nft.get(nftId);
     nft.ownerId = to.toString();
 
+    await NftHandler.ensureNftStatuses();
+
     await nft.save();
 
     const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+    nftEvent.blockId = blockHeight;
+    nftEvent.timestamp = blockTimestamp;
+    nftEvent.fromId = who.toString();
+    nftEvent.toId = to.toString();
+    nftEvent.price = BigInt(-1);
+    nftEvent.params = `${event.event.data}`;
+
     nftEvent.nftId = nftId;
     nftEvent.eventId = eventId;
     nftEvent.quantity = 1;
@@ -236,6 +402,7 @@ export class NftHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -246,9 +413,25 @@ export class NftHandler {
     const nft = await Nft.get(nftId);
     nft.burned = true;
 
+    nft.statusId = 'Removed';
+    nft.updateBlockId = blockHeight;
+    nft.updateTimestamp = blockTimestamp;
+    nft.price = BigInt(-1);
+
+    nft.debug = `${event.event.section}.${event.event.method}`;
+
+    await NftHandler.ensureNftStatuses();
+
     await nft.save();
 
     const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+    nftEvent.blockId = blockHeight;
+    nftEvent.timestamp = blockTimestamp;
+    nftEvent.fromId = who.toString();
+    nftEvent.price = BigInt(-1);
+    nftEvent.params = `${event.event.data}`;
+
     nftEvent.nftId = nftId;
     nftEvent.eventId = eventId;
     nftEvent.quantity = 1;

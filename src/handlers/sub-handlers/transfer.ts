@@ -32,7 +32,7 @@ export class TransferHandler {
     transfer.callId = id;
     transfer.timestamp = extrinsicHandler.timestamp;
     transfer.isSuccess = isSuccess;
-    transfer.blockId = extrinsic.block.block.hash.toString();
+    transfer.blockId = extrinsic?.block?.block?.header?.number?.toString();
 
     await transfer.save();
   }

@@ -7,6 +7,7 @@ import {ExtrinsicHandler} from '../extrinsic';
 import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
+import {getBlockTimestamp} from '../../helpers';
 import {api, logger} from '@subquery/types';
 
 export class CategoryHandler {
@@ -26,6 +27,9 @@ export class CategoryHandler {
     } = event;
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
+    const eventIdx = event.idx.toString();
+    const eventId = `${blockHeight}-${eventIdx}`;
     const id = global_id.toString();
 
     await AccountHandler.ensureAccount(origin);
@@ -56,6 +60,10 @@ export class CategoryHandler {
     category.creatorId = origin;
     category.name = name;
     category.debug = origin;
+
+    category.blockId = blockHeight;
+    category.timestamp = blockTimestamp;
+    category.eventId = eventId;
 
     await category.save();
   }

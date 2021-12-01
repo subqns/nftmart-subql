@@ -38,8 +38,9 @@ export class BlockHandler {
   }
 
   public async save() {
-    const block = new Block(this.hash);
+    const block = new Block(`${this.number}`);
 
+    block.hash = this.hash;
     block.number = this.number;
     block.timestamp = this.blockTimestamp;
     block.specVersion = this.specVersion;

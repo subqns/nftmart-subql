@@ -92,7 +92,7 @@ export class CallHandler {
       call.signerId = this.signer;
       call.isSuccess = depth === 0 ? extrinsic.isSuccess : extrinsic.batchInterruptedIndex > idx;
       call.timestamp = extrinsic.timestamp;
-      call.blockId = this.blockHash;
+      call.blockId = this.blockNumber;
 
       if (!isRoot) {
         await CallHandler.ensureCall(parentCallId);

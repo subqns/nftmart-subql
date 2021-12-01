@@ -21,7 +21,7 @@ export class ExtrinsicHandler {
   }
 
   get id(): string {
-    return `${this.extrinsic?.block?.block?.header?.number.toString()}-${this.extrinsic?.idx.toString()}`;
+    return `${this.blockNumber}-${this.extrinsic?.idx.toString()}`;
   }
 
   get method(): string {
@@ -46,6 +46,10 @@ export class ExtrinsicHandler {
 
   get timestamp(): Date {
     return this.extrinsic.block.timestamp;
+  }
+
+  get blockNumber(): bigint {
+    return this.extrinsic?.block?.block?.header?.number.toBigInt();
   }
 
   get blockHash(): string {
@@ -75,7 +79,7 @@ export class ExtrinsicHandler {
   public async save() {
     const record = new Extrinsic(this.id);
 
-    await BlockHandler.ensureBlock(this.blockHash);
+    await BlockHandler.ensureBlock(`${this.blockNumber.toString()}`);
     await AccountHandler.ensureAccount(this.signer);
 
     record.method = this.method;
@@ -88,7 +92,7 @@ export class ExtrinsicHandler {
     record.signature = this.signature;
     record.tip = this.tip;
     record.isSuccess = this.isSuccess;
-    record.blockId = this.blockHash;
+    record.blockId = this.blockNumber.toString();
 
     await record.save();
 

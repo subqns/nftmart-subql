@@ -2,45 +2,46 @@
 
 // Auto-generated , DO NOT EDIT
 
-export {Block} from "./Block"
+export {Block} from './Block';
 
-export {Extrinsic} from "./Extrinsic"
+export {Extrinsic} from './Extrinsic';
 
-export {Event} from "./Event"
+export {Event} from './Event';
 
-export {Call} from "./Call"
+export {Call} from './Call';
 
-export {Nft} from "./Nft"
+export {Nft} from './Nft';
 
-export {NftEvent} from "./NftEvent"
+export {NftStatus} from './NftStatus';
 
-export {Account} from "./Account"
+export {NftEvent} from './NftEvent';
 
-export {Token} from "./Token"
+export {Account} from './Account';
 
-export {Transfer} from "./Transfer"
+export {Token} from './Token';
 
-export {Category} from "./Category"
+export {Transfer} from './Transfer';
 
-export {CategoryClass} from "./CategoryClass"
+export {Category} from './Category';
 
-export {Class} from "./Class"
+export {CategoryClass} from './CategoryClass';
 
-export {NftTransfer} from "./NftTransfer"
+export {Class} from './Class';
 
-export {OrderItem} from "./OrderItem"
+export {NftTransfer} from './NftTransfer';
 
-export {AuctionItem} from "./AuctionItem"
+export {OrderItem} from './OrderItem';
 
-export {Auction} from "./Auction"
+export {AuctionItem} from './AuctionItem';
 
-export {AuctionBid} from "./AuctionBid"
+export {Auction} from './Auction';
 
-export {Order} from "./Order"
+export {AuctionBid} from './AuctionBid';
 
-export {OrderStatus} from "./OrderStatus"
+export {Order} from './Order';
 
-export {OrderDirection} from "./OrderDirection"
+export {OrderStatus} from './OrderStatus';
 
-export {BadData} from "./BadData"
+export {OrderDirection} from './OrderDirection';
 
+export {BadData} from './BadData';

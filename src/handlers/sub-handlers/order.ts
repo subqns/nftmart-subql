@@ -4,18 +4,20 @@ import {Order} from '../../types/models/Order';
 import {OrderItem} from '../../types/models/OrderItem';
 import {OrderStatus} from '../../types/models/OrderStatus';
 import {OrderDirection} from '../../types/models/OrderDirection';
+import {Nft} from '../../types/models/Nft';
 import {CallHandler} from '../call';
 import {ExtrinsicHandler} from '../extrinsic';
 import {EventHandler} from '../event';
 import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
+import {getBlockTimestamp} from '../../helpers';
 import {ClassHandler} from './class';
 import {NftHandler} from './nft';
 import {NftEvent} from '../../types/models/NftEvent';
 import {CategoryHandler} from './category';
 
-var initialized: boolean = false;
+let initialized: boolean = false;
 
 export class OrderHandler {
   static async ensureOrder(id: string) {
@@ -28,11 +30,11 @@ export class OrderHandler {
     }
 
     if (!initialized) {
-      OrderHandler.ensureOrderStatus('Created');
-      OrderHandler.ensureOrderStatus('Cancelled');
-      OrderHandler.ensureOrderStatus('Completed');
-      OrderHandler.ensureOrderDirection('Buy');
-      OrderHandler.ensureOrderDirection('Sell');
+      await OrderHandler.ensureOrderStatus('Created');
+      await OrderHandler.ensureOrderStatus('Cancelled');
+      await OrderHandler.ensureOrderStatus('Completed');
+      await OrderHandler.ensureOrderDirection('Buy');
+      await OrderHandler.ensureOrderDirection('Sell');
       initialized = true;
     }
   }
@@ -74,6 +76,7 @@ export class OrderHandler {
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -112,6 +115,13 @@ export class OrderHandler {
       console.log(`created new order item`, classId, tokenId, quantity);
 
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = who.toString();
+      nftEvent.price = price;
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;
@@ -119,6 +129,14 @@ export class OrderHandler {
       nftEvent.method = event.event.method;
       nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
       await nftEvent.save();
+
+      const nft = await Nft.get(nftId);
+      nft.statusId = 'ForSale';
+      nft.updateBlockId = blockHeight;
+      nft.updateTimestamp = blockTimestamp;
+      nft.price = price;
+      nft.debug = `${event.event.section}.${event.event.method}`;
+      await nft.save();
     }
 
     await AccountHandler.ensureAccount(origin);
@@ -127,6 +145,7 @@ export class OrderHandler {
     const order = await Order.get(orderId);
 
     // order.categoryId = categoryId
+
     order.price = price;
     order.deadline = deadline;
     order.commissionRate = commissionRate;
@@ -156,6 +175,7 @@ export class OrderHandler {
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -178,6 +198,14 @@ export class OrderHandler {
     for (let orderItem of orderItems) {
       const nftId = orderItem.nftId;
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = ownerId;
+      nftEvent.toId = buyerId;
+      nftEvent.price = order.price;
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;
@@ -185,6 +213,15 @@ export class OrderHandler {
       nftEvent.method = event.event.method;
       nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
       await nftEvent.save();
+
+      const nft = await Nft.get(nftId);
+      nft.statusId = 'Idle';
+      nft.updateBlockId = blockHeight;
+      nft.updateTimestamp = blockTimestamp;
+      nft.dealPrice = order.price;
+      nft.price = BigInt(-1);
+      nft.debug = `${event.event.section}.${event.event.method}`;
+      await nft.save();
     }
   }
 
@@ -201,6 +238,7 @@ export class OrderHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -223,6 +261,13 @@ export class OrderHandler {
     for (let orderItem of orderItems) {
       const nftId = orderItem.nftId;
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = who.toString();
+      nftEvent.price = BigInt(-1);
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;
@@ -251,6 +296,7 @@ export class OrderHandler {
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHash = event.extrinsic?.block?.block?.header?.hash?.toString();
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -294,6 +340,13 @@ export class OrderHandler {
       console.log(`created new offer item`, classId, tokenId, quantity);
 
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = who.toString();
+      nftEvent.price = price;
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;
@@ -309,6 +362,7 @@ export class OrderHandler {
     const order = await Order.get(orderId);
 
     // order.categoryId = categoryId
+
     order.price = price;
     order.deadline = deadline;
     order.commissionRate = commissionRate;
@@ -336,6 +390,7 @@ export class OrderHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -358,6 +413,15 @@ export class OrderHandler {
     for (let orderItem of orderItems) {
       const nftId = orderItem.nftId;
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = ownerId;
+      nftEvent.toId = buyerId;
+      nftEvent.price = order.price;
+      //nftEvent.price = BigInt(-1);
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;
@@ -365,6 +429,15 @@ export class OrderHandler {
       nftEvent.method = event.event.method;
       nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
       await nftEvent.save();
+
+      const nft = await Nft.get(nftId);
+      nft.statusId = 'Idle';
+      nft.updateBlockId = blockHeight;
+      nft.updateTimestamp = blockTimestamp;
+      nft.dealPrice = order.price;
+      nft.price = BigInt(-1);
+      nft.debug = `${event.event.section}.${event.event.method}`;
+      await nft.save();
     }
   }
 
@@ -381,6 +454,7 @@ export class OrderHandler {
     const origin = event.extrinsic?.extrinsic?.signer?.toString();
     const args = event.extrinsic?.extrinsic?.method.args;
     const blockHeight = event.extrinsic?.block?.block?.header?.number?.toString();
+    const blockTimestamp = getBlockTimestamp(event.extrinsic?.block?.block);
     const eventIdx = event.idx.toString();
     const eventId = `${blockHeight}-${eventIdx}`;
 
@@ -403,6 +477,13 @@ export class OrderHandler {
     for (let orderItem of orderItems) {
       const nftId = orderItem.nftId;
       const nftEvent = new NftEvent(`${nftId}-${eventId}`);
+
+      nftEvent.blockId = blockHeight;
+      nftEvent.timestamp = blockTimestamp;
+      nftEvent.fromId = who.toString();
+      nftEvent.price = BigInt(-1);
+      nftEvent.params = `${event.event.data}`;
+
       nftEvent.nftId = nftId;
       nftEvent.eventId = eventId;
       nftEvent.quantity = 1;

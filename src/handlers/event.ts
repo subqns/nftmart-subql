@@ -55,12 +55,32 @@ export class EventHandler {
         handler: ClassHandler.handleEventNftmartCreatedClass,
       },
       {
+        key: 'nftmart-UpdatedClass',
+        handler: ClassHandler.handleEventNftmartUpdatedClass,
+      },
+      {
         key: 'nftmart-DestroyedClass',
         handler: ClassHandler.handleEventNftmartDestroyedClass,
       },
       {
         key: 'nftmart-MintedToken',
         handler: NftHandler.handleEventNftmartMintedToken,
+      },
+      {
+        key: 'nftmart-UpdatedToken',
+        handler: NftHandler.handleEventNftmartUpdatedToken,
+      },
+      {
+        key: 'nftmart-UpdatedTokenMetadata',
+        handler: NftHandler.handleEventNftmartUpdatedToken,
+      },
+      {
+        key: 'nftmart-UpdatedTokenRoyalty',
+        handler: NftHandler.handleEventNftmartUpdatedToken,
+      },
+      {
+        key: 'nftmart-UpdatedTokenRoyaltyBeneficiary',
+        handler: NftHandler.handleEventNftmartUpdatedToken,
       },
       {
         key: 'nftmart-TransferredToken',
@@ -169,17 +189,17 @@ export class EventHandler {
   }
 
   get extrinsicId() {
-    return `${this.blockNumber}-${this.event?.extrinsic?.idx?.toString()}`;
+    return `${this.blockNumber.toString()}-${this.event?.extrinsic?.idx?.toString()}`;
   }
 
   get id() {
-    return `${this.blockNumber}-${this.index}`;
+    return `${this.blockNumber.toString()}-${this.index}`;
   }
 
   public async save() {
     const event = new Event(this.id);
 
-    await BlockHandler.ensureBlock(this.blockHash);
+    await BlockHandler.ensureBlock(`${this.blockNumber.toString()}`);
 
     if (this.extrinsicHash) {
       await ExtrinsicHandler.ensureExtrinsic(this.extrinsicId);
@@ -190,7 +210,7 @@ export class EventHandler {
     event.method = this.method;
     event.data = this.data;
 
-    event.blockId = this.blockHash;
+    event.blockId = this.blockNumber.toString();
 
     if (this.extrinsicHash) {
       event.extrinsicId = this.extrinsicId;
