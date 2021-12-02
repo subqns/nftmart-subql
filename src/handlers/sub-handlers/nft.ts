@@ -325,7 +325,7 @@ export class NftHandler {
 
     nftEvent.blockId = blockHeight;
     nftEvent.timestamp = blockTimestamp;
-    nftEvent.fromId = who.toString();
+    // nftEvent.fromId = who.toString();
     nftEvent.toId = to.toString();
     nftEvent.price = BigInt(-1);
     nftEvent.params = `${event.event.data}`;

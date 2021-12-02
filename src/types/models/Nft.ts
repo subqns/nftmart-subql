@@ -37,6 +37,8 @@ export class Nft implements Entity {
 
   public price?: bigint;
 
+  public pledge?: bigint;
+
   public statusId?: string;
 
   public createBlockId?: string;

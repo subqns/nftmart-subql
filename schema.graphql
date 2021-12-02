@@ -83,6 +83,7 @@ type Nft @entity {
 
   dealPrice: BigInt
   price: BigInt
+  pledge: BigInt
   status: NftStatus
   createBlock: Block
   createTimestamp: Date
@@ -245,6 +246,7 @@ type Auction @entity {
   items: [AuctionItem] @derivedFrom(field: "auction")
   bids: [AuctionBid] @derivedFrom(field: "auction")
   bidCount: Int
+  lastBidPrice: BigInt
   commissionRate: Int
   blockCreated: Int # block number
   eventCreated: Event #create relation to event

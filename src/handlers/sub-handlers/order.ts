@@ -135,6 +135,7 @@ export class OrderHandler {
       nft.updateBlockId = blockHeight;
       nft.updateTimestamp = blockTimestamp;
       nft.price = price;
+      nft.pledge = deposit;
       nft.debug = `${event.event.section}.${event.event.method}`;
       await nft.save();
     }
@@ -220,6 +221,7 @@ export class OrderHandler {
       nft.updateTimestamp = blockTimestamp;
       nft.dealPrice = order.price;
       nft.price = BigInt(-1);
+      nft.pledge = BigInt(-1);
       nft.debug = `${event.event.section}.${event.event.method}`;
       await nft.save();
     }
@@ -275,6 +277,15 @@ export class OrderHandler {
       nftEvent.method = event.event.method;
       nftEvent.sectionMethod = `${event.event.section}.${event.event.method}`;
       await nftEvent.save();
+
+      const nft = await Nft.get(nftId);
+      nft.statusId = 'Idle';
+      nft.updateBlockId = blockHeight;
+      nft.updateTimestamp = blockTimestamp;
+      nft.price = BigInt(-1);
+      nft.pledge = BigInt(-1);
+      nft.debug = `${event.event.section}.${event.event.method}`;
+      await nft.save();
     }
   }
 

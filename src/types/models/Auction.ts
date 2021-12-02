@@ -27,6 +27,8 @@ export class Auction implements Entity {
 
   public bidCount?: number;
 
+  public lastBidPrice?: bigint;
+
   public commissionRate?: number;
 
   public blockCreated?: number;
