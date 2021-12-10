@@ -367,6 +367,9 @@ export class NftHandler {
 
     await NftHandler.ensureNftStatuses();
 
+    nft.updateBlockId = blockHeight;
+    nft.updateTimestamp = blockTimestamp;
+    nft.debug = `${event.event.section}.${event.event.method}`;
     await nft.save();
 
     const nftEvent = new NftEvent(`${nftId}-${eventId}`);

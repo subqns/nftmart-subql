@@ -216,6 +216,7 @@ export class OrderHandler {
       await nftEvent.save();
 
       const nft = await Nft.get(nftId);
+      nft.ownerId = buyerId;
       nft.statusId = 'Idle';
       nft.updateBlockId = blockHeight;
       nft.updateTimestamp = blockTimestamp;
@@ -442,6 +443,7 @@ export class OrderHandler {
       await nftEvent.save();
 
       const nft = await Nft.get(nftId);
+      nft.ownerId = buyerId;
       nft.statusId = 'Idle';
       nft.updateBlockId = blockHeight;
       nft.updateTimestamp = blockTimestamp;
