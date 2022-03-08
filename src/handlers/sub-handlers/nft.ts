@@ -1,4 +1,4 @@
-import {SubstrateExtrinsic, SubstrateEvent} from '@subquery/types';
+import {SubstrateExtrinsic, SubstrateEvent} from '@subql/types';
 import {Call} from '../../types/models/Call';
 import {Class} from '../../types/models/Class';
 import {Nft} from '../../types/models/Nft';
@@ -12,7 +12,7 @@ import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
 import {getBlockTimestamp} from '../../helpers';
 import {ClassHandler} from './class';
-import {api, logger} from '@subquery/types';
+import {api, logger} from '@subql/types';
 import {BadData} from '../../types/models/BadData';
 
 export class NftHandler {

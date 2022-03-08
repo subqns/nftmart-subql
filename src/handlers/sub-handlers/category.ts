@@ -1,4 +1,4 @@
-import {SubstrateExtrinsic, SubstrateEvent} from '@subquery/types';
+import {SubstrateExtrinsic, SubstrateEvent} from '@subql/types';
 import {Call} from '../../types/models/Call';
 import {Category} from '../../types/models/Category';
 import {BadData} from '../../types/models/BadData';
@@ -8,7 +8,7 @@ import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
 import {getBlockTimestamp} from '../../helpers';
-import {api, logger} from '@subquery/types';
+import {api, logger} from '@subql/types';
 
 export class CategoryHandler {
   static async ensureCategory(id: string) {

@@ -1,4 +1,4 @@
-import {SubstrateExtrinsic} from '@subquery/types';
+import {SubstrateExtrinsic} from '@subql/types';
 import {checkIfExtrinsicExecuteSuccess, getBatchInterruptedIndex} from '../helpers';
 import {Extrinsic} from '../types/models/Extrinsic';
 import {BlockHandler} from './block';

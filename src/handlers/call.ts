@@ -1,5 +1,5 @@
 import type {Vec} from '@polkadot/types';
-import {SubstrateExtrinsic} from '@subquery/types';
+import {SubstrateExtrinsic} from '@subql/types';
 import {Call} from '../types/models/Call';
 import {ExtrinsicHandler} from './extrinsic';
 import {AccountHandler} from './sub-handlers/account';

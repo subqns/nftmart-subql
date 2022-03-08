@@ -1,5 +1,5 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from '@subquery/types';
+import {Entity, store} from '@subql/types';
 import assert from 'assert';
 
 export class NftStatus implements Entity {

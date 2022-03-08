@@ -1,4 +1,4 @@
-import {SubstrateExtrinsic, SubstrateEvent} from '@subquery/types';
+import {SubstrateExtrinsic, SubstrateEvent} from '@subql/types';
 import {Call} from '../../types/models/Call';
 import {CategoryClass} from '../../types/models/CategoryClass';
 import {Nft} from '../../types/models/Nft';
@@ -9,7 +9,7 @@ import {DispatchedCallData} from '../types';
 import {AccountHandler} from './account';
 import {hexToAscii} from '../../helpers/common';
 import {ClassHandler} from './class';
-import {api, logger} from '@subquery/types';
+import {api, logger} from '@subql/types';
 import {BadData} from '../../types/models/BadData';
 
 export class CategoryClassHandler {
