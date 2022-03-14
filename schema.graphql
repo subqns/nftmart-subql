@@ -1,6 +1,6 @@
 type Block @entity {
   id: ID!
-  uuid: Uuid
+# uuid: Uuid
 
   hash: String
   number: BigInt @index

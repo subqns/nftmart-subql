@@ -43,6 +43,7 @@ export class BlockHandler {
 
   async expiredAuctionsHook() {
     const expiredAuctions = await Auction.getByDeadlineBlockId(`${this.number}`);
+    if (!expiredAuctions) return
     for (let auc of expiredAuctions) {
       const items = await AuctionItem.getByAuctionId(auc.id);
       for (let item of items) {

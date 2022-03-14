@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.1
 description: 'nftmart (https://github.com/nftt-studio/nftmart-node) subquery project'
 repository: 'https://github.com/subqns/nftmart-subql.git'
 schema: ./schema.graphql
@@ -113,7 +113,7 @@ network:
 dataSources:
   - name: main
     kind: substrate/Runtime
-    startBlock: 0 # nothing interesting to see before this
+    startBlock: 1 # nothing interesting to see before this
     mapping:
       handlers:
         - handler: handleBlock
