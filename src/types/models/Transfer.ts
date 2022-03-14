@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type TransferProps = Omit<Transfer, NonNullable<FunctionPropertyNames<Transfer>>>;
 
 export class Transfer implements Entity {
 
@@ -47,15 +51,58 @@ export class Transfer implements Entity {
         assert((id !== null && id !== undefined), "Cannot get Transfer entity without an ID");
         const record = await store.get('Transfer', id.toString());
         if (record){
-            return Transfer.create(record);
+            return Transfer.create(record as TransferProps);
         }else{
             return;
         }
     }
 
 
+    static async getByFromId(fromId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'fromId', fromId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
 
-    static create(record){
+    static async getByToId(toId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'toId', toId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
+
+    static async getByTokenId(tokenId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'tokenId', tokenId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
+
+    static async getByBlockId(blockId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'blockId', blockId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
+
+    static async getByExtrinsicId(extrinsicId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'extrinsicId', extrinsicId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
+
+    static async getByCallId(callId: string): Promise<Transfer[] | undefined>{
+      
+      const records = await store.getByField('Transfer', 'callId', callId);
+      return records.map(record => Transfer.create(record as TransferProps));
+      
+    }
+
+
+    static create(record: TransferProps): Transfer {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new Transfer(record.id);
         Object.assign(entity,record);
         return entity;

@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type OrderStatusProps = Omit<OrderStatus, NonNullable<FunctionPropertyNames<OrderStatus>>>;
 
 export class OrderStatus implements Entity {
 
@@ -27,7 +31,7 @@ export class OrderStatus implements Entity {
         assert((id !== null && id !== undefined), "Cannot get OrderStatus entity without an ID");
         const record = await store.get('OrderStatus', id.toString());
         if (record){
-            return OrderStatus.create(record);
+            return OrderStatus.create(record as OrderStatusProps);
         }else{
             return;
         }
@@ -35,7 +39,8 @@ export class OrderStatus implements Entity {
 
 
 
-    static create(record){
+    static create(record: OrderStatusProps): OrderStatus {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new OrderStatus(record.id);
         Object.assign(entity,record);
         return entity;

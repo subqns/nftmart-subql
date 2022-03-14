@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type OrderDirectionProps = Omit<OrderDirection, NonNullable<FunctionPropertyNames<OrderDirection>>>;
 
 export class OrderDirection implements Entity {
 
@@ -27,7 +31,7 @@ export class OrderDirection implements Entity {
         assert((id !== null && id !== undefined), "Cannot get OrderDirection entity without an ID");
         const record = await store.get('OrderDirection', id.toString());
         if (record){
-            return OrderDirection.create(record);
+            return OrderDirection.create(record as OrderDirectionProps);
         }else{
             return;
         }
@@ -35,7 +39,8 @@ export class OrderDirection implements Entity {
 
 
 
-    static create(record){
+    static create(record: OrderDirectionProps): OrderDirection {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new OrderDirection(record.id);
         Object.assign(entity,record);
         return entity;

@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type EventProps = Omit<Event, NonNullable<FunctionPropertyNames<Event>>>;
 
 export class Event implements Entity {
 
@@ -39,15 +43,30 @@ export class Event implements Entity {
         assert((id !== null && id !== undefined), "Cannot get Event entity without an ID");
         const record = await store.get('Event', id.toString());
         if (record){
-            return Event.create(record);
+            return Event.create(record as EventProps);
         }else{
             return;
         }
     }
 
 
+    static async getByBlockId(blockId: string): Promise<Event[] | undefined>{
+      
+      const records = await store.getByField('Event', 'blockId', blockId);
+      return records.map(record => Event.create(record as EventProps));
+      
+    }
 
-    static create(record){
+    static async getByExtrinsicId(extrinsicId: string): Promise<Event[] | undefined>{
+      
+      const records = await store.getByField('Event', 'extrinsicId', extrinsicId);
+      return records.map(record => Event.create(record as EventProps));
+      
+    }
+
+
+    static create(record: EventProps): Event {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new Event(record.id);
         Object.assign(entity,record);
         return entity;

@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type AuctionBidProps = Omit<AuctionBid, NonNullable<FunctionPropertyNames<AuctionBid>>>;
 
 export class AuctionBid implements Entity {
 
@@ -43,15 +47,37 @@ export class AuctionBid implements Entity {
         assert((id !== null && id !== undefined), "Cannot get AuctionBid entity without an ID");
         const record = await store.get('AuctionBid', id.toString());
         if (record){
-            return AuctionBid.create(record);
+            return AuctionBid.create(record as AuctionBidProps);
         }else{
             return;
         }
     }
 
 
+    static async getByAuctionId(auctionId: string): Promise<AuctionBid[] | undefined>{
+      
+      const records = await store.getByField('AuctionBid', 'auctionId', auctionId);
+      return records.map(record => AuctionBid.create(record as AuctionBidProps));
+      
+    }
 
-    static create(record){
+    static async getByCommissionAgentId(commissionAgentId: string): Promise<AuctionBid[] | undefined>{
+      
+      const records = await store.getByField('AuctionBid', 'commissionAgentId', commissionAgentId);
+      return records.map(record => AuctionBid.create(record as AuctionBidProps));
+      
+    }
+
+    static async getByBidderId(bidderId: string): Promise<AuctionBid[] | undefined>{
+      
+      const records = await store.getByField('AuctionBid', 'bidderId', bidderId);
+      return records.map(record => AuctionBid.create(record as AuctionBidProps));
+      
+    }
+
+
+    static create(record: AuctionBidProps): AuctionBid {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new AuctionBid(record.id);
         Object.assign(entity,record);
         return entity;

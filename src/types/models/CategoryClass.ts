@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type CategoryClassProps = Omit<CategoryClass, NonNullable<FunctionPropertyNames<CategoryClass>>>;
 
 export class CategoryClass implements Entity {
 
@@ -31,15 +35,30 @@ export class CategoryClass implements Entity {
         assert((id !== null && id !== undefined), "Cannot get CategoryClass entity without an ID");
         const record = await store.get('CategoryClass', id.toString());
         if (record){
-            return CategoryClass.create(record);
+            return CategoryClass.create(record as CategoryClassProps);
         }else{
             return;
         }
     }
 
 
+    static async getByCategoryId(categoryId: string): Promise<CategoryClass[] | undefined>{
+      
+      const records = await store.getByField('CategoryClass', 'categoryId', categoryId);
+      return records.map(record => CategoryClass.create(record as CategoryClassProps));
+      
+    }
 
-    static create(record){
+    static async getByClassId(classId: string): Promise<CategoryClass[] | undefined>{
+      
+      const records = await store.getByField('CategoryClass', 'classId', classId);
+      return records.map(record => CategoryClass.create(record as CategoryClassProps));
+      
+    }
+
+
+    static create(record: CategoryClassProps): CategoryClass {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new CategoryClass(record.id);
         Object.assign(entity,record);
         return entity;

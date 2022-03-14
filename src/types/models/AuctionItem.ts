@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type AuctionItemProps = Omit<AuctionItem, NonNullable<FunctionPropertyNames<AuctionItem>>>;
 
 export class AuctionItem implements Entity {
 
@@ -33,22 +37,30 @@ export class AuctionItem implements Entity {
         assert((id !== null && id !== undefined), "Cannot get AuctionItem entity without an ID");
         const record = await store.get('AuctionItem', id.toString());
         if (record){
-            return AuctionItem.create(record);
+            return AuctionItem.create(record as AuctionItemProps);
         }else{
             return;
         }
     }
 
 
+    static async getByNftId(nftId: string): Promise<AuctionItem[] | undefined>{
+      
+      const records = await store.getByField('AuctionItem', 'nftId', nftId);
+      return records.map(record => AuctionItem.create(record as AuctionItemProps));
+      
+    }
+
     static async getByAuctionId(auctionId: string): Promise<AuctionItem[] | undefined>{
       
       const records = await store.getByField('AuctionItem', 'auctionId', auctionId);
-      return records.map(record => AuctionItem.create(record));
+      return records.map(record => AuctionItem.create(record as AuctionItemProps));
       
     }
 
 
-    static create(record){
+    static create(record: AuctionItemProps): AuctionItem {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new AuctionItem(record.id);
         Object.assign(entity,record);
         return entity;

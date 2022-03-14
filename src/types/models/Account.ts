@@ -1,7 +1,11 @@
 // Auto-generated , DO NOT EDIT
-import {Entity, store} from "@subql/types";
+import {Entity, FunctionPropertyNames, store} from "@subql/types";
 import assert from 'assert';
 
+
+
+
+type AccountProps = Omit<Account, NonNullable<FunctionPropertyNames<Account>>>;
 
 export class Account implements Entity {
 
@@ -27,7 +31,7 @@ export class Account implements Entity {
         assert((id !== null && id !== undefined), "Cannot get Account entity without an ID");
         const record = await store.get('Account', id.toString());
         if (record){
-            return Account.create(record);
+            return Account.create(record as AccountProps);
         }else{
             return;
         }
@@ -35,7 +39,8 @@ export class Account implements Entity {
 
 
 
-    static create(record){
+    static create(record: AccountProps): Account {
+        assert(typeof record.id === 'string', "id must be provided");
         let entity = new Account(record.id);
         Object.assign(entity,record);
         return entity;
