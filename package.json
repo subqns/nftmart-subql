@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build-tsc": "tsc -b",
-    "build": "subql build",
+    "build": "tsc -b",
+    "webpack": "subql build",
     "test": "jest",
     "prepack": "rm -rf dist && yarn build",
     "codegen": "subql codegen",

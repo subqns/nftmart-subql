@@ -30,7 +30,7 @@ export class Block implements Entity {
     async save(): Promise<void>{
         let id = this.id;
         assert(id !== null, "Cannot save Block entity without an ID");
-        // await store.set('Block', id.toString(), this);
+        await store.set('Block', id.toString(), this);
     }
     static async remove(id:string): Promise<void>{
         assert(id !== null, "Cannot remove Block entity without an ID");
