@@ -119,7 +119,7 @@ export class NftHandler {
     nft.tokenId = tokenId;
     nft.quantity = 1;
 
-    let tokendata = await api.query.ormlNft.tokens.at(blockHash, classId, tokenId);
+    let tokendata = await api.query.ormlNFT.tokens.at(blockHash, classId, tokenId);
     let metadataStr = '{}';
     /*
     {
@@ -264,7 +264,7 @@ export class NftHandler {
     nft.classId = classId;
     nft.tokenId = tokenId;
 
-    let tokendata = await api.query.ormlNft.tokens.at(blockHash, classId, tokenId);
+    let tokendata = await api.query.ormlNFT.tokens.at(blockHash, classId, tokenId);
     let metadataStr = '{}';
     /*
     {

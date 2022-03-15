@@ -38,7 +38,8 @@ export class ClassHandler {
     // console.log(`origin:`, origin)
     // console.log(`owner:`, ownerId)
 
-    let cls = ((await api.query.ormlNft.classes.at(blockHash, class_id)) as any).unwrap();
+    console.log(blockHash, class_id.toString())
+    let cls = ((await api.query.ormlNFT.classes.at(blockHash, class_id)) as any).unwrap();
 
     const name = hexToAscii(cls.data.name.toString());
     const description = hexToAscii(cls.data.description.toString());
@@ -128,7 +129,7 @@ export class ClassHandler {
     // console.log(`origin:`, origin)
     // console.log(`owner:`, ownerId)
 
-    let cls = ((await api.query.ormlNft.classes.at(blockHash, class_id)) as any).unwrap();
+    let cls = ((await api.query.ormlNFT.classes.at(blockHash, class_id)) as any).unwrap();
 
     const name = hexToAscii(cls.data.name.toString());
     const description = hexToAscii(cls.data.description.toString());
